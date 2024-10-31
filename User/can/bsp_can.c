@@ -193,10 +193,10 @@ void CAN_SetMsg(CanTxMsg *TxMessage)
     uint8_t data[8] = {0xE4, 0x0C, 0xE4, 0x0C, 0xE4, 0x0C, 0xE4, 0x0C};
 	
   //TxMessage.StdId=0x00;						 
-  TxMessage->ExtId=0x1314;					 //使用的扩展ID
-  TxMessage->IDE=CAN_ID_EXT;					 //扩展模式
-  TxMessage->RTR=CAN_RTR_DATA;				 //发送的是数据
-  TxMessage->DLC=8;							 //数据长度为8字节
+  TxMessage->ExtId = 0x520;					  //使用的扩展ID，将ID设置为0x520
+  TxMessage->IDE = CAN_ID_EXT;				  //扩展模式
+  TxMessage->RTR = CAN_RTR_DATA;			  //发送的是数据
+  TxMessage->DLC = 8;						  //数据长度为8字节
 	
 	/*将设置好的数据发送出去*/
 	for (ubCounter = 0; ubCounter < 8; ubCounter++)

@@ -27,9 +27,9 @@ __IO uint32_t flag = 0;		 //用于标志是否接收到数据，在中断函数中赋值
 CanTxMsg TxMessage;			     //发送缓冲区
 CanRxMsg RxMessage;				 //接收缓冲区
 
-static void LCD_Test(void);	
 static void Delay ( __IO uint32_t nCount );
 void Printf_Charater(void)   ;
+void Display_CAN_Voltage(uint8_t* data);
 
 /**
   * @brief  主函数
@@ -61,7 +61,7 @@ int main(void)
 	ILI9341_GramScan ( 6 );
     while(1)
 	{
-		LCD_Test();
+
 		
 		/*按一次按键发送一次数据*/
 		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
@@ -82,6 +82,7 @@ int main(void)
 
 
 		}
+		
 		if(flag==1)
 		{		
 			LED_GREEN;
@@ -89,7 +90,7 @@ int main(void)
 
 			CAN_DEBUG_ARRAY(RxMessage.Data,8); 
 			
-			Parse_CAN_Data(RxMessage.Data);
+			Display_CAN_Voltage(RxMessage.Data);
 			
 			flag=0;
 		}
@@ -100,110 +101,55 @@ int main(void)
 }
 
 
-
 extern uint16_t lcdid;
 
-/*用于测试各种液晶的函数*/
-void LCD_Test(void)
+/**
+  * @brief  解析CAN接收的数据为电压值并在LCD上显示
+  * @param  data: 指向接收到的8字节数据的指针
+  * @retval 无
+  */
+void Display_CAN_Voltage(uint8_t* data)
 {
-	/*演示显示变量*/
-	static uint8_t testCNT = 0;	
-	char dispBuff[100];
-	
-	testCNT++;	
-	
-	LCD_SetFont(&Font8x16);
-	LCD_SetColors(RED,BLACK);
+    // 将变量声明放在函数开头
+    uint16_t voltage1, voltage2, voltage3, voltage4;
+    char displayStr[32];
 
-  ILI9341_Clear(0,0,LCD_X_LENGTH,LCD_Y_LENGTH);	/* 清屏，显示全黑 */
-	/********显示字符串示例*******/
-  ILI9341_DispStringLine_EN(LINE(0),"BH 3.2 inch LCD para:");
-  ILI9341_DispStringLine_EN(LINE(1),"Image resolution:240x320 px");
-  if(lcdid == LCDID_ILI9341)
-  {
-    ILI9341_DispStringLine_EN(LINE(2),"ILI9341 LCD driver");
-  }
+    // DBC逻辑解析，每两个字节倒序并转换为电压值
+    voltage1 = (data[1] << 8) | data[0];
+    voltage2 = (data[3] << 8) | data[2];
+    voltage3 = (data[5] << 8) | data[4];
+    voltage4 = (data[7] << 8) | data[6];
+    
+    // 在串口打印解析后的电压值
+    printf("当前电压为：\r\n");
+    printf("Voltage1: %dmv\r\n", voltage1);
+    printf("Voltage2: %dmv\r\n", voltage2);
+    printf("Voltage3: %dmv\r\n", voltage3);
+    printf("Voltage4: %dmv\r\n", voltage4);
 
-  ILI9341_DispStringLine_EN(LINE(3),"XPT2046 Touch Pad driver");
-  
-	/********显示变量示例*******/
-	LCD_SetFont(&Font16x24);
-	LCD_SetTextColor(GREEN);
+    // 清屏并设置字体和颜色
+    ILI9341_Clear(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
+    LCD_SetFont(&Font16x24);
+    LCD_SetColors(WHITE, BLACK);
+    
+    // 在LCD上显示电压值
+    ILI9341_DispStringLine_EN(LINE(0), "Voltage Values:");
+    
+    snprintf(displayStr, sizeof(displayStr), "V1: %dmV", voltage1);
+    ILI9341_DispStringLine_EN(LINE(1), displayStr);
 
-	/*使用c标准库把变量转化成字符串*/
-	sprintf(dispBuff,"Count : %d ",testCNT);
-  LCD_ClearLine(LINE(4));	/* 清除单行文字 */
-	
-	/*然后显示该字符串即可，其它变量也是这样处理*/
-	ILI9341_DispStringLine_EN(LINE(4),dispBuff);
+    snprintf(displayStr, sizeof(displayStr), "V2: %dmV", voltage2);
+    ILI9341_DispStringLine_EN(LINE(2), displayStr);
 
-	/*******显示图形示例******/
-	LCD_SetFont(&Font24x32);
-  /* 画直线 */
-  
-  LCD_ClearLine(LINE(4));/* 清除单行文字 */
-	LCD_SetTextColor(BLUE);
+    snprintf(displayStr, sizeof(displayStr), "V3: %dmV", voltage3);
+    ILI9341_DispStringLine_EN(LINE(3), displayStr);
 
-  ILI9341_DispStringLine_EN(LINE(4),"Draw line:");
-  
-	LCD_SetTextColor(RED);
-  ILI9341_DrawLine(50,170,210,230);  
-  ILI9341_DrawLine(50,200,210,240);
-  
-	LCD_SetTextColor(GREEN);
-  ILI9341_DrawLine(100,170,200,230);  
-  ILI9341_DrawLine(200,200,220,240);
-	
-	LCD_SetTextColor(BLUE);
-  ILI9341_DrawLine(110,170,110,230);  
-  ILI9341_DrawLine(130,200,220,240);
-  
-  Delay(0xFFFFFF);
-  
-  ILI9341_Clear(0,16*8,LCD_X_LENGTH,LCD_Y_LENGTH-16*8);	/* 清屏，显示全黑 */
-  
-  
-  /*画矩形*/
-
-  LCD_ClearLine(LINE(4));	/* 清除单行文字 */
-	LCD_SetTextColor(BLUE);
-
-  ILI9341_DispStringLine_EN(LINE(4),"Draw Rect:");
-
-	LCD_SetTextColor(RED);
-  ILI9341_DrawRectangle(50,200,100,30,1);
-	
-	LCD_SetTextColor(GREEN);
-  ILI9341_DrawRectangle(160,200,20,40,0);
-	
-	LCD_SetTextColor(BLUE);
-  ILI9341_DrawRectangle(170,200,50,20,1);
-  
-  
-  Delay(0xFFFFFF);
-	
-	ILI9341_Clear(0,16*8,LCD_X_LENGTH,LCD_Y_LENGTH-16*8);	/* 清屏，显示全黑 */
-
-  /* 画圆 */
-  LCD_ClearLine(LINE(4));	/* 清除单行文字 */
-	LCD_SetTextColor(BLUE);
-	
-  ILI9341_DispStringLine_EN(LINE(4),"Draw Cir:");
-
-	LCD_SetTextColor(RED);
-  ILI9341_DrawCircle(100,200,20,0);
-	
-	LCD_SetTextColor(GREEN);
-  ILI9341_DrawCircle(100,200,10,1);
-	
-	LCD_SetTextColor(BLUE);
-	ILI9341_DrawCircle(140,200,20,0);
-
-  Delay(0xFFFFFF);
-  
-  ILI9341_Clear(0,16*8,LCD_X_LENGTH,LCD_Y_LENGTH-16*8);	/* 清屏，显示全黑 */
-
+    snprintf(displayStr, sizeof(displayStr), "V4: %dmV", voltage4);
+    ILI9341_DispStringLine_EN(LINE(4), displayStr);
 }
+
+
+
 
 /**
   * @brief  简单延时函数

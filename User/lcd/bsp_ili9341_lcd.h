@@ -193,6 +193,7 @@ extern uint8_t LCD_SCAN_MODE;
 /* ¶¨Òå LCD Çý¶¯Ð¾Æ¬ ID */
 #define     LCDID_UNKNOWN             0
 #define     LCDID_ILI9341             0x9341
+#define     LCDID_ST7789V             0x8552
 
 
 
