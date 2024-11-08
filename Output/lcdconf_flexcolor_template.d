@@ -1,0 +1,9 @@
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\Config\LCDConf_FlexColor_Template.c
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\GUI.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\GUI_ConfDefaults.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\Config\GUIConf.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\GUI_Type.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\LCD.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\Global.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\GUI_Version.h
+..\..\output\lcdconf_flexcolor_template.o: ..\..\EMWin\inc\GUIDRV_FlexColor.h

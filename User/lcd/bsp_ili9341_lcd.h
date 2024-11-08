@@ -222,7 +222,16 @@ void 											LCD_SetBackColor								(uint16_t Color);
 void 											LCD_SetTextColor								(uint16_t Color)	;
 void 											LCD_SetColors										(uint16_t TextColor, uint16_t BackColor);
 void 											LCD_GetColors										(uint16_t *TextColor, uint16_t *BackColor);
+void Display_CAN_Voltage(uint8_t* data);
 
+
+void ILI9341_WritePixel(int x, int y, uint16_t color);
+uint16_t ILI9341_ReadPixel(int x, int y) ;
+void ILI9341_Write_DataMultiple(uint16_t * pData, int numItems);
+void ILI9341_ReadDataMultiple(uint16_t * pData, int numItems);
+void                 ILI9341_Write_Cmd           ( uint16_t usCmd );
+void                 ILI9341_Write_Data          ( uint16_t usData );
+uint16_t             ILI9341_Read_Data           ( void );
 
 #endif /* __BSP_ILI9341_ILI9341_H */
 

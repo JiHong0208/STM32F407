@@ -37,3 +37,5 @@
 ..\..\output\bsp_ili9341_lcd.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h
 ..\..\output\bsp_ili9341_lcd.o: ..\..\User\./font/fonts.h
 ..\..\output\bsp_ili9341_lcd.o: ..\..\User\./font/fonts.h
+..\..\output\bsp_ili9341_lcd.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\..\output\bsp_ili9341_lcd.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\string.h

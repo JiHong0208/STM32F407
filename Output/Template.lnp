@@ -46,6 +46,11 @@
 "..\..\output\bsp_can.o"
 "..\..\output\fonts.o"
 "..\..\output\bsp_ili9341_lcd.o"
+"..\..\output\guiconf.o"
+"..\..\output\guidrv_template.o"
+"..\..\output\lcdconf_flexcolor_template.o"
+"..\..\EMWin\Lib\STemWin532_CM4_Keil.lib"
+"..\..\output\gui_x.o"
 --library_type=microlib --strict --scatter "..\..\Output\Template.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

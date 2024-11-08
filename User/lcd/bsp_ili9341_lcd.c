@@ -1,6 +1,7 @@
-
 #include "./lcd/bsp_ili9341_lcd.h"
 #include "./font/fonts.h"	
+#include <stdio.h>
+#include <string.h>
 
 //根据液晶扫描方向而变化的XY像素宽度
 //调用ILI9341_GramScan函数设置方向时会自动更改
@@ -22,9 +23,7 @@ static sFONT *LCD_Currentfonts = &Font8x16;  //英文字体
 static uint16_t CurrentTextColor   = BLACK;//前景色
 static uint16_t CurrentBackColor   = WHITE;//背景色
 
-__inline void                 ILI9341_Write_Cmd           ( uint16_t usCmd );
-__inline void                 ILI9341_Write_Data          ( uint16_t usData );
-__inline uint16_t             ILI9341_Read_Data           ( void );
+
 static void                   ILI9341_Delay               ( __IO uint32_t nCount );
 static void                   ILI9341_GPIO_Config         ( void );
 static void                   ILI9341_FSMC_Config         ( void );
@@ -32,8 +31,6 @@ static void                   ILI9341_REG_Config          ( void );
 static void                   ILI9341_SetCursor           ( uint16_t usX, uint16_t usY );
 static __inline void          ILI9341_FillColor           ( uint32_t ulAmout_Point, uint16_t usColor );
 static uint16_t               ILI9341_Read_PixelData      ( void );
-
-
 
 
 /**
@@ -1396,6 +1393,137 @@ void LCD_ClearLine(uint16_t Line)
   ILI9341_Clear(0,Line,LCD_X_LENGTH,((sFONT *)LCD_GetFont())->Height);	/* 清屏，显示全黑 */
 
 }
+
+
+
+/**
+  * @brief  解析CAN接收的数据为电压值并在LCD上显示
+  * @param  data: 指向接收到的8字节数据的指针
+  * @retval 无
+  */
+void Display_CAN_Voltage(uint8_t* data)
+{
+    // 将变量声明放在函数开头
+    uint16_t voltage1, voltage2, voltage3, voltage4;
+    char displayStr[32];
+
+    // DBC逻辑解析，每两个字节倒序并转换为电压值
+    voltage1 = (data[1] << 8) | data[0];
+    voltage2 = (data[3] << 8) | data[2];
+    voltage3 = (data[5] << 8) | data[4];
+    voltage4 = (data[7] << 8) | data[6];
+    
+    // 在串口打印解析后的电压值
+    printf("电压为：\r\n");
+    printf("Voltage1: %dmv\r\n", voltage1);
+    printf("Voltage2: %dmv\r\n", voltage2);
+    printf("Voltage3: %dmv\r\n", voltage3);
+    printf("Voltage4: %dmv\r\n", voltage4);
+
+    // 清屏并设置字体和颜色
+    ILI9341_Clear(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
+    LCD_SetFont(&Font16x24);
+    LCD_SetColors(WHITE, BLACK);
+    
+    // 在LCD上显示电压值
+    ILI9341_DispStringLine_EN(LINE(0), "Voltage Values:");
+    
+    snprintf(displayStr, sizeof(displayStr), "V1: %dmV", voltage1);
+    ILI9341_DispStringLine_EN(LINE(1), displayStr);
+
+    snprintf(displayStr, sizeof(displayStr), "V2: %dmV", voltage2);
+    ILI9341_DispStringLine_EN(LINE(2), displayStr);
+
+    snprintf(displayStr, sizeof(displayStr), "V3: %dmV", voltage3);
+    ILI9341_DispStringLine_EN(LINE(3), displayStr);
+
+    snprintf(displayStr, sizeof(displayStr), "V4: %dmV", voltage4);
+    ILI9341_DispStringLine_EN(LINE(4), displayStr);
+}
+
+/**************************************************************************************************************/
+/* 文件: ILI9341 显示驱动函数集 */
+
+/**
+  * @brief  向 ILI9341 写入一个像素点
+  * @param  x : X 坐标
+  * @param  y : Y 坐标
+  * @param  color : 像素颜色
+  * @retval 无
+  */
+void ILI9341_WritePixel(int x, int y, uint16_t color) {
+    // 设置 X 坐标
+    ILI9341_Write_Cmd(CMD_SetCoordinateX);
+    ILI9341_Write_Data(x >> 8);     // 高字节
+    ILI9341_Write_Data(x & 0xFF);   // 低字节
+
+    // 设置 Y 坐标
+    ILI9341_Write_Cmd(CMD_SetCoordinateY);
+    ILI9341_Write_Data(y >> 8);     // 高字节
+    ILI9341_Write_Data(y & 0xFF);   // 低字节
+
+    // 写入颜色数据
+    ILI9341_Write_Cmd(CMD_SetPixel);
+    ILI9341_Write_Data(color);      // 填充像素
+}
+
+/**
+  * @brief  从 ILI9341 读取一个像素点的颜色
+  * @param  x : X 坐标
+  * @param  y : Y 坐标
+  * @retval 返回读取到的颜色值
+  */
+uint16_t ILI9341_ReadPixel(int x, int y) {
+    uint16_t color;
+
+    // 设置 X 坐标
+    ILI9341_Write_Cmd(CMD_SetCoordinateX);
+    ILI9341_Write_Data(x >> 8);     // 高字节
+    ILI9341_Write_Data(x & 0xFF);   // 低字节
+
+    // 设置 Y 坐标
+    ILI9341_Write_Cmd(CMD_SetCoordinateY);
+    ILI9341_Write_Data(y >> 8);     // 高字节
+    ILI9341_Write_Data(y & 0xFF);   // 低字节
+
+    // 发送读取像素命令
+    ILI9341_Write_Cmd(CMD_SetPixel);
+
+    // 读取像素颜色数据
+    color = ILI9341_Read_Data();    // 读取像素数据
+
+    return color;
+}
+
+/**
+  * @brief  向 ILI9341 写入多个数据
+  * @param  pData : 指向数据数组的指针
+  * @param  numItems : 写入数据的数量
+  * @retval 无
+  */
+void ILI9341_Write_DataMultiple(uint16_t *pData, int numItems) {
+    register int i;  // 使用 register 来声明循环变量 i
+    for (i = 0; i < numItems; i++) {
+        ILI9341_Write_Data(pData[i]);  // 向 ILI9341 写入多个数据
+    }
+}
+
+/**
+  * @brief  从 ILI9341 读取多个数据
+  * @param  pData : 存放读取数据的数组
+  * @param  numItems : 读取数据的数量
+  * @retval 无
+  */
+void ILI9341_ReadDataMultiple(uint16_t *pData, int numItems) {
+    register int i;  // 使用 register 来声明循环变量 i
+    for (i = 0; i < numItems; i++) {
+        pData[i] = ILI9341_Read_Data();  // 从 ILI9341 读取多个数据
+    }
+}
+
+/**************************************************************************************************************/
+
+
 /*********************end of file*************************/
 
 

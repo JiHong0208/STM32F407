@@ -29,7 +29,7 @@ CanRxMsg RxMessage;				 //接收缓冲区
 
 static void Delay ( __IO uint32_t nCount );
 void Printf_Charater(void)   ;
-void Display_CAN_Voltage(uint8_t* data);
+
 
 /**
   * @brief  主函数
@@ -59,7 +59,8 @@ int main(void)
 	printf("\r\n 5.本例中的can波特率为1MBps，为stm32的can最高速率。 \r\n");
 	
 	ILI9341_GramScan ( 6 );
-    while(1)
+    
+	while(1)
 	{
 
 		
@@ -73,7 +74,7 @@ int main(void)
 			
 			Delay(10000);//等待发送完毕，可使用CAN_TransmitStatus查看状态
 			
-			LED_GREEN;
+			Display_CAN_Voltage(TxMessage.Data);
 			
 			printf("\r\n已使用CAN发送数据包！\r\n"); 			
 			printf("\r\n发送的报文内容为：\r\n");
@@ -103,50 +104,6 @@ int main(void)
 
 extern uint16_t lcdid;
 
-/**
-  * @brief  解析CAN接收的数据为电压值并在LCD上显示
-  * @param  data: 指向接收到的8字节数据的指针
-  * @retval 无
-  */
-void Display_CAN_Voltage(uint8_t* data)
-{
-    // 将变量声明放在函数开头
-    uint16_t voltage1, voltage2, voltage3, voltage4;
-    char displayStr[32];
-
-    // DBC逻辑解析，每两个字节倒序并转换为电压值
-    voltage1 = (data[1] << 8) | data[0];
-    voltage2 = (data[3] << 8) | data[2];
-    voltage3 = (data[5] << 8) | data[4];
-    voltage4 = (data[7] << 8) | data[6];
-    
-    // 在串口打印解析后的电压值
-    printf("当前电压为：\r\n");
-    printf("Voltage1: %dmv\r\n", voltage1);
-    printf("Voltage2: %dmv\r\n", voltage2);
-    printf("Voltage3: %dmv\r\n", voltage3);
-    printf("Voltage4: %dmv\r\n", voltage4);
-
-    // 清屏并设置字体和颜色
-    ILI9341_Clear(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
-    LCD_SetFont(&Font16x24);
-    LCD_SetColors(WHITE, BLACK);
-    
-    // 在LCD上显示电压值
-    ILI9341_DispStringLine_EN(LINE(0), "Voltage Values:");
-    
-    snprintf(displayStr, sizeof(displayStr), "V1: %dmV", voltage1);
-    ILI9341_DispStringLine_EN(LINE(1), displayStr);
-
-    snprintf(displayStr, sizeof(displayStr), "V2: %dmV", voltage2);
-    ILI9341_DispStringLine_EN(LINE(2), displayStr);
-
-    snprintf(displayStr, sizeof(displayStr), "V3: %dmV", voltage3);
-    ILI9341_DispStringLine_EN(LINE(3), displayStr);
-
-    snprintf(displayStr, sizeof(displayStr), "V4: %dmV", voltage4);
-    ILI9341_DispStringLine_EN(LINE(4), displayStr);
-}
 
 
 
