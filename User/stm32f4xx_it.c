@@ -30,8 +30,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "./can/bsp_can.h"
-
-
+#include "./tim/bsp_basic_tim.h"
+#include "GUI.h"
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -146,6 +146,23 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f429_439xx.s).                         */
 /******************************************************************************/
+/**
+  * @}
+  */ 
+	/**
+  * @brief  This function handles TIM interrupt request.
+  * @param  None
+  * @retval None
+  */
+extern volatile GUI_TIMER_TIME OS_TimeMS;	
+void  BASIC_TIM_IRQHandler (void)
+{
+	OS_TimeMS++;
+	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET ) 
+	{	
+		TIM_ClearITPendingBit(BASIC_TIM , TIM_IT_Update);  		 
+	}		 	
+}
 
 /**
   * @}

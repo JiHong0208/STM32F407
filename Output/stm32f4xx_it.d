@@ -37,3 +37,11 @@
 ..\..\output\stm32f4xx_it.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h
 ..\..\output\stm32f4xx_it.o: ..\..\User\./can/bsp_can.h
 ..\..\output\stm32f4xx_it.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\..\output\stm32f4xx_it.o: ..\..\User\./tim/bsp_basic_tim.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\GUI.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\GUI_ConfDefaults.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\Config\GUIConf.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\GUI_Type.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\LCD.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\Global.h
+..\..\output\stm32f4xx_it.o: ..\..\EMWin\inc\GUI_Version.h

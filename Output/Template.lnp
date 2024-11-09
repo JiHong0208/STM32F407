@@ -46,6 +46,7 @@
 "..\..\output\bsp_can.o"
 "..\..\output\fonts.o"
 "..\..\output\bsp_ili9341_lcd.o"
+"..\..\output\bsp_basic_tim.o"
 "..\..\output\guiconf.o"
 "..\..\output\guidrv_template.o"
 "..\..\output\lcdconf_flexcolor_template.o"
