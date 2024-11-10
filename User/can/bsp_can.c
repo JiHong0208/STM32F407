@@ -16,7 +16,7 @@
   */ 
 
 #include "./can/bsp_can.h"
-
+#include <stdio.h>
 
 
 /*
@@ -205,6 +205,46 @@ void CAN_SetMsg(CanTxMsg *TxMessage)
   }
 }
 
+/**********************************************自添加CAN报文解析函数**********************************************/
+// 定义全局静态变量用于存储电压值
+static uint16_t g_voltage1 = 0;
+static uint16_t g_voltage2 = 0;
+static uint16_t g_voltage3 = 0;
+static uint16_t g_voltage4 = 0;
+
+/**
+  * @brief  解析CAN报文，更新全局电压变量
+  * @param  data: 指向接收到的8字节CAN数据的指针
+  * @retval 无
+  */
+void Process_CAN_Voltage(uint8_t* data)
+{
+    // 解析报文中的电压值，每两个字节倒序转换
+    g_voltage1 = (data[1] << 8) | data[0];
+    g_voltage2 = (data[3] << 8) | data[2];
+    g_voltage3 = (data[5] << 8) | data[4];
+    g_voltage4 = (data[7] << 8) | data[6];
+
+    // 调试输出电压值
+    printf("电压1: %dmV, 电压2: %dmV, 电压3: %dmV, 电压4: %dmV\r\n",g_voltage1, g_voltage2, g_voltage3, g_voltage4);
+}
+
+/**
+  * @brief  获取解析后的电压值
+  * @param  voltageIndex: 电压序号（1~4）
+  * @retval 对应电压值，单位mV
+  */
+uint16_t Get_CAN_Voltage(uint8_t voltageIndex)
+{
+    switch (voltageIndex)
+    {
+        case 1: return g_voltage1;
+        case 2: return g_voltage2;
+        case 3: return g_voltage3;
+        case 4: return g_voltage4;
+        default: return 0; // 错误处理，返回0表示无效电压
+    }
+}
 
 /**************************END OF FILE************************************/
 

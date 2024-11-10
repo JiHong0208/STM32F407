@@ -65,8 +65,8 @@ Purpose     : Display controller configuration (single layer)
 //
 // Physical display size
 //
-#define XSIZE_PHYS  240 // To be adapted to x-screen size
-#define YSIZE_PHYS  320 // To be adapted to y-screen size
+#define XSIZE_PHYS  ILI9341_LESS_PIXEL // To be adapted to x-screen size
+#define YSIZE_PHYS  ILI9341_MORE_PIXEL // To be adapted to y-screen size
 
 /*********************************************************************
 *
@@ -142,12 +142,10 @@ static void LcdWriteDataMultiple(U16 * pData, int NumItems) {
 * Function description:
 *   Reads multiple values from a display register.
 */
-static void LcdReadDataMultiple(U16 * pData, int NumItems) {
-  //ili9806读取的第一个数据为无效数据，舍弃(原来没有使用config.numdummyreads参数的时候需要这个语句)
-	//*pData = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9806G_DATA );	
+static void LcdReadDataMultiple(U16 * pData, int NumItems) {	
   while (NumItems--) {
     // ... TBD by user
-		*pData++ = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA );//modify by fire
+		*pData++ = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA );
   }
 }
 
@@ -184,12 +182,12 @@ void LCD_X_Config(void) {
   //
   Config.FirstCOM = 0;                                          
   Config.FirstSEG = 0;                                           
-	Config.Orientation = GUI_MIRROR_Y|GUI_MIRROR_X;								//竖屏
-//调整扫描方向，主要是为了使触摸输出的坐标对应
-	LCD_SCAN_MODE = 6;	
-//  Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;					    //横屏
-////调整扫描方向，主要是为了使触摸输出的坐标对应	
-//	LCD_SCAN_MODE = 5;	
+  Config.Orientation = GUI_MIRROR_Y|GUI_MIRROR_X;				//竖屏
+  //调整扫描方向，主要是为了使触摸输出的坐标对应
+  LCD_SCAN_MODE = 6;	
+  //Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;			//横屏
+  //调整扫描方向，主要是为了使触摸输出的坐标对应	
+  //LCD_SCAN_MODE = 5;	
   Config.NumDummyReads = 2;                                     //读取的第二个数据才是真实数据
 
   GUIDRV_FlexColor_Config(pDevice, &Config);
@@ -200,7 +198,12 @@ void LCD_X_Config(void) {
   PortAPI.pfWrite16_A1  = LcdWriteData;
   PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
   PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
-  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);//modify by fire
+  
+  //GUIDRV_FLEXCOLOR_F66709:屏幕控制器型号标识(ILI9341支持FlexColor 驱动)
+  //GUIDRV_FLEXCOLOR_M16C0B16:接口模式标识,显示控制器的接口时序为 16-bit 并行接口，8080 模式。M16C0 表示 16-bit 并行数据总线。
+  //B16 表示 8080 总线模式，即使用读写信号 (RD/WR) 进行数据传输。
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);
+  
 }
 
 
@@ -238,8 +241,8 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
     // controller is not initialized by any external routine this needs
     // to be adapted by the customer...
     //
-    // ...
-    ILI9341_Init();//modify by fire
+    // LCD 的初始化
+    ILI9341_Init();
     
     return 0;
   }

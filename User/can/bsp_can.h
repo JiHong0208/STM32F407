@@ -46,7 +46,7 @@
                                          uint8_t* a = array;\
                                          if(CAN_DEBUG_ARRAY_ON)\
                                          {\
-                                            printf("<<-CAN-DEBUG-ARRAY->>\n");\
+                                            printf("CAN±¨ÎÄÄÚÈÝ£º\n");\
                                             for (i = 0; i < (num); i++)\
                                             {\
                                                 printf("%02x   ", (a)[i]);\
@@ -95,6 +95,8 @@ void CAN_Config(void);
 void CAN_SetMsg(CanTxMsg *TxMessage);
 void Init_RxMes(CanRxMsg *RxMessage);
 
+void Process_CAN_Voltage(uint8_t* data);
+uint16_t Get_CAN_Voltage(uint8_t voltageIndex);
 #endif
 
 

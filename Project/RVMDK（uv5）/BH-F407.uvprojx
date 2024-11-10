@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\EMWin\Config;..\..\EMWin\inc</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\EMWin\Config;..\..\EMWin\inc;..\..\EMWinApp</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -847,16 +847,6 @@
               <FilePath>..\..\EMWin\Config\GUIConf.h</FilePath>
             </File>
             <File>
-              <FileName>GUIDRV_Template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\EMWin\Config\GUIDRV_Template.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDRV_Template.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\EMWin\Config\GUIDRV_Template.h</FilePath>
-            </File>
-            <File>
               <FileName>LCDConf_FlexColor_Template.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\EMWin\Config\LCDConf_FlexColor_Template.c</FilePath>
@@ -875,6 +865,31 @@
               <FileName>GUI_X.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\EMWin\Config\GUI_X.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EMWinApp</GroupName>
+          <Files>
+            <File>
+              <FileName>START.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\EMWinApp\START.c</FilePath>
+            </File>
+            <File>
+              <FileName>START.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\EMWinApp\START.h</FilePath>
+            </File>
+            <File>
+              <FileName>Voltage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\EMWinApp\Voltage.c</FilePath>
+            </File>
+            <File>
+              <FileName>Voltage.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\EMWinApp\Voltage.h</FilePath>
             </File>
           </Files>
         </Group>
