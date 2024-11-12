@@ -51,7 +51,7 @@ int main(void)
 		// 调用 GUI_Delay() 以处理窗口消息
 		GUI_Delay(10);
 		
-		/*按一次按键发送一次数据*/
+		/* 检测KEY1按键，按下时显示电压信息 */
 		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
 		{
 			LED_BLUE;
@@ -64,6 +64,18 @@ int main(void)
 			
 			// 处理 CAN 数据，解析电压值
             Process_CAN_Voltage(RxMessage.Data);
+			
+			//将发送电压显示到LCD屏幕
+			Voltage();
+		}
+		
+		/* 检测KEY2按键，按下时显示电压信息 */
+		if(Key_Scan(KEY2_GPIO_PORT, KEY2_PIN) == KEY_ON)
+		{
+			LED_PURPLE;
+			
+			//将接收电压显示到LCD屏幕
+			Voltage();
 		}
 		
 		if(flag==1)
@@ -79,17 +91,6 @@ int main(void)
 			flag=0;
 		}
 
-		/* 检测KEY2按键，按下时显示测试信息 */
-		if(Key_Scan(KEY2_GPIO_PORT, KEY2_PIN) == KEY_ON)
-		{
-			LED_PURPLE;
-			
-			// 清空屏幕，避免显示旧的内容
-            GUI_Clear();
-            // 延时，确保显示更新
-            GUI_Delay(10);
-			Voltage();
-		}
 	}
 }
 

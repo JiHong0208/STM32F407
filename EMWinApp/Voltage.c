@@ -38,9 +38,11 @@
 
 // USER START (Optionally insert additional defines)
 #define ID_TIMER_UPDATE  (GUI_ID_USER + 0x10)
-static GRAPH_DATA_Handle hGraphData;
-static WM_HWIN hGraph;
-
+// 定义四个数据句柄
+static GRAPH_DATA_Handle hGraphData1;
+static GRAPH_DATA_Handle hGraphData2;
+static GRAPH_DATA_Handle hGraphData3;
+static GRAPH_DATA_Handle hGraphData4;
 // USER END
 
 /*********************************************************************
@@ -60,7 +62,7 @@ static WM_HWIN hGraph;
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 240, 320, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_0, 7, 5, 227, 30, 0, 0x64, 0 },
-  { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 9, 110, 220, 210, 0, 0x0, 0 },
+  { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 0, 110, 240, 240, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_1, 4, 90, 80, 20, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
@@ -74,24 +76,72 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
+
 /**
-  * @brief 更新 Graph 控件上的电压值
-  * @retval 无
-  */
+ * @brief 更新 Graph 控件上的电压值
+ * @retval 无
+ */
 void UpdateGraph(void) {
-    uint16_t voltage1 = Get_CAN_Voltage(1);
-    uint16_t voltage2 = Get_CAN_Voltage(2);
-    uint16_t voltage3 = Get_CAN_Voltage(3);
-    uint16_t voltage4 = Get_CAN_Voltage(4);
+    uint16_t voltage1 = Get_CAN_Voltage(1);  // 获取电压1（单位毫伏）
+    uint16_t voltage2 = Get_CAN_Voltage(2);  // 获取电压2（单位毫伏）
+    uint16_t voltage3 = Get_CAN_Voltage(3);  // 获取电压3（单位毫伏）
+    uint16_t voltage4 = Get_CAN_Voltage(4);  // 获取电压4（单位毫伏）
 
-    // 更新 Graph 数据，最多显示4个电压值
-    GRAPH_DATA_YT_Clear(hGraphData);
-    GRAPH_DATA_YT_AddValue(hGraphData, voltage1);
-    GRAPH_DATA_YT_AddValue(hGraphData, voltage2);
-    GRAPH_DATA_YT_AddValue(hGraphData, voltage3);
-    GRAPH_DATA_YT_AddValue(hGraphData, voltage4);
+    // 将毫伏转换为伏特
+    float voltage1V = voltage1 / 100.0f;
+    float voltage2V = voltage2 / 100.0f;
+    float voltage3V = voltage3 / 100.0f;
+    float voltage4V = voltage4 / 100.0f;
 
+    // 为每条曲线添加新的电压值
+    GRAPH_DATA_YT_AddValue(hGraphData1, voltage1V);
+    GRAPH_DATA_YT_AddValue(hGraphData2, voltage2V);
+    GRAPH_DATA_YT_AddValue(hGraphData3, voltage3V);
+    GRAPH_DATA_YT_AddValue(hGraphData4, voltage4V);
 }
+
+/*********************************************************************
+*
+*       GRAPH_Voltage
+*       用于初始化和配置电压图表(Graph)控件
+*/
+void GRAPH_Voltage(WM_HWIN hWin) {
+    WM_HWIN hGraph;
+    GRAPH_SCALE_Handle hScaleY;
+
+    // 获取 Graph 控件句柄
+    hGraph = WM_GetDialogItem(hWin, ID_GRAPH_0);
+
+    // 配置 Graph 控件
+    GRAPH_SetBorder(hGraph, 30, 5, 5, 35);  // 设置边框
+    GRAPH_SetGridVis(hGraph, 1);  // 显示网格
+    GRAPH_SetGridDistX(hGraph, 25);  // 设置 X 轴网格线间距为 25
+    GRAPH_SetGridDistY(hGraph, 10);  // 设置 Y 轴网格线间距为 10
+    GRAPH_SetLineStyleH(hGraph, GUI_LS_DOT);  // 设置横向网格为点状线
+
+    // 创建 Y 轴刻度
+    hScaleY = GRAPH_SCALE_Create(10, GUI_TA_LEFT, GRAPH_SCALE_CF_VERTICAL, 50);
+    GRAPH_AttachScale(hGraph, hScaleY);
+    GRAPH_SCALE_SetFont(hScaleY, GUI_FONT_13B_ASCII);
+    GRAPH_SCALE_SetTextColor(hScaleY, GUI_RED);
+    GRAPH_SCALE_SetFactor(hScaleY, 0.1);  // 设置Y轴刻度为10*0.1=1，即每个刻度代表1
+
+    // 创建四条曲线数据对象
+    hGraphData1 = GRAPH_DATA_YT_Create(GUI_GREEN, 100, NULL, 0);
+    hGraphData2 = GRAPH_DATA_YT_Create(GUI_RED, 100, NULL, 0);
+    hGraphData3 = GRAPH_DATA_YT_Create(GUI_BLUE, 100, NULL, 0);
+    hGraphData4 = GRAPH_DATA_YT_Create(GUI_YELLOW, 100, NULL, 0);
+
+    // 将曲线添加到 Graph 控件中
+    GRAPH_AttachData(hGraph, hGraphData1);
+    GRAPH_AttachData(hGraph, hGraphData2);
+    GRAPH_AttachData(hGraph, hGraphData3);
+    GRAPH_AttachData(hGraph, hGraphData4);
+
+    // 创建并启动定时器，每 500ms 触发一次
+    WM_CreateTimer(hWin, ID_TIMER_UPDATE, 500, 0);
+}
+
 // USER END
 
 /*********************************************************************
@@ -101,7 +151,6 @@ void UpdateGraph(void) {
 static void _cbDialog(WM_MESSAGE * pMsg) {
   WM_HWIN hItem;
   // USER START (Optionally insert additional variables)
-  GRAPH_SCALE_Handle hScale;
   // USER END
 
   switch (pMsg->MsgId) {
@@ -124,47 +173,16 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetFont(hItem, GUI_FONT_13B_ASCII);
     TEXT_SetText(hItem, "Graph:");
     // USER START (Optionally insert additional code for further widget initialization)
-    // 获取 Graph 控件句柄
-    hGraph = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
-
-    // 配置 Graph 控件
-    GRAPH_SetGridVis(hGraph, 1);  // 显示网格
-
-    GRAPH_SetColor(hGraph, GUI_GREEN, GUI_GREEN);  // 曲线颜色
+    
+    // 调用 GRAPH_Voltage 函数初始化图表和定时器
+    GRAPH_Voltage(pMsg->hWin);
 	
-    // 创建数据句柄，最多存储4个点
-    hGraphData = GRAPH_DATA_YT_Create(GUI_GREEN, 4, NULL, 0);
-    GRAPH_AttachData(hGraph, hGraphData);
-
-    // 设置 X 轴网格线间距为 25，保持不变
-    GRAPH_SetGridDistX(hGraph, 25);
-
-    // 设置 Y 轴网格线间距为 15
-    GRAPH_SetGridDistY(hGraph, 10);
-
-    // 设置网格线的显示样式为点状
-    GRAPH_SetLineStyleH(hGraph, GUI_LS_DOT);  // 横向网格使用点状线
-	
-    // 设置 Y 轴大小
-    GRAPH_SetVSizeY(hGraph, 15000);  // Y 轴最大值为 15000 mV
-    GRAPH_SetVSizeX(hGraph, 4);  // X 轴显示4个点
-
-    // 创建 X 轴刻度
-    hScale = GRAPH_SCALE_Create(200, GUI_TA_HCENTER, GRAPH_SCALE_CF_HORIZONTAL, 50);
-
-    GRAPH_AttachScale(hGraph, hScale);
-    GRAPH_SCALE_SetFont(hScale, GUI_FONT_8_ASCII);
-
-	
-	// 创建并启动定时器，每 500ms 触发一次
-    WM_CreateTimer(pMsg->hWin, ID_TIMER_UPDATE, 500, 0);
-	break;
-
-    case WM_TIMER:
+  case WM_TIMER:
     // 检查定时器 ID
-    if (WM_GetTimerId(pMsg->Data.v) == ID_TIMER_UPDATE) {
-      UpdateGraph();  // 更新 Graph
-      WM_RestartTimer(pMsg->Data.v, 500);  // 重启定时器
+    if (WM_GetTimerId(pMsg->Data.v) == ID_TIMER_UPDATE) 
+	{
+      UpdateGraph();  // 更新 Graph 数据
+      WM_RestartTimer(pMsg->Data.v, 500);
     }
     // USER END
     break;
@@ -190,7 +208,11 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 WM_HWIN Voltage(void);
 WM_HWIN Voltage(void) {
   WM_HWIN hWin;
-
+  // 清空屏幕，避免显示旧的内容
+  GUI_Clear();
+  // 延时，确保显示更新
+  GUI_Delay(10);
+	
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
