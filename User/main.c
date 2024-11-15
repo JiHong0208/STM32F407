@@ -11,6 +11,12 @@
 #include "START.h"
 #include "Voltage.h"
 
+// 定义 app 的起始地址宏
+#define APP_BASE_ADDRESS  0x08020000
+
+// 声明初始化函数
+void App_Init(void);
+
 __IO uint32_t flag = 0;		 //用于标志是否接收到数据，在中断函数中赋值
 CanTxMsg TxMessage;			     //发送缓冲区
 CanRxMsg RxMessage;				 //接收缓冲区
@@ -24,6 +30,11 @@ static void Delay ( __IO uint32_t nCount );
   */
 int main(void)
 {
+
+	/* 更新APP的中断向量表和重启全局中断 */
+    App_Init();
+	
+	/* 初始化LED */
 	LED_GPIO_Config();
 	
     /* 初始化USART1 */
@@ -46,8 +57,10 @@ int main(void)
 		
 	LCD_Start();      // 显示窗口
 	
+	
 	while(1)
 	{
+
 		// 调用 GUI_Delay() 以处理窗口消息
 		GUI_Delay(10);
 		
@@ -105,3 +118,22 @@ static void Delay ( __IO uint32_t nCount )
   for ( ; nCount != 0; nCount -- );
 	
 }
+
+
+/**
+  * @brief  应用程序初始化函数
+  * @param  无
+  * @retval 无
+  */
+void App_Init(void)
+{
+	#define VECT_TAB_OFFSET  0x0000
+	
+    // 更新向量表地址为 app 的起始地址
+    SCB->VTOR = APP_BASE_ADDRESS | VECT_TAB_OFFSET;
+
+    // 清除 FAULTMASK，开启全局中断
+    __set_FAULTMASK(0);
+    __enable_irq();
+}
+
