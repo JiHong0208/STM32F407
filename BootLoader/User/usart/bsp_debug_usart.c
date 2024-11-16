@@ -1,7 +1,6 @@
 #include "./usart/bsp_debug_usart.h"
 
 
-
  /**
   * @brief  配置嵌套向量中断控制器NVIC
   * @param  无

@@ -171,7 +171,7 @@ void  BASIC_TIM_IRQHandler (void)
   * @}
   */ 
 
-extern __IO uint32_t flag ;		 //用于标志是否接收到数据，在中断函数中赋值
+extern __IO uint32_t CANRxflag ;		 //用于标志是否接收到数据，在中断函数中赋值
 extern CanRxMsg RxMessage;				 //接收缓冲区
 
 void CAN_RX_IRQHandler(void)
@@ -182,11 +182,11 @@ void CAN_RX_IRQHandler(void)
 	/* 比较ID是否为0x1314 */ 
 	if((RxMessage.ExtId==0x1314) && (RxMessage.IDE==CAN_ID_EXT) && (RxMessage.DLC==8) )
 	{
-	flag = 1; 					       //接收成功  
+	CANRxflag = 1; 					       //接收成功  
 	}
 	else
 	{
-	flag = 0; 					   //接收失败
+	CANRxflag = 0; 					   //接收失败
 	}
 }
 /**

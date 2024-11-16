@@ -37,12 +37,17 @@
 
 
 // USER START (Optionally insert additional defines)
+#define ID_TEXT_2    (GUI_ID_USER + 0x04)
+#define ID_TEXT_3    (GUI_ID_USER + 0x05)
+#define ID_TEXT_4    (GUI_ID_USER + 0x06)
+#define ID_TEXT_5    (GUI_ID_USER + 0x07)
 #define ID_TIMER_UPDATE  (GUI_ID_USER + 0x10)
 // 定义四个数据句柄
 static GRAPH_DATA_Handle hGraphData1;
 static GRAPH_DATA_Handle hGraphData2;
 static GRAPH_DATA_Handle hGraphData3;
 static GRAPH_DATA_Handle hGraphData4;
+static char voltageText[20];  // 存储电压值文本
 // USER END
 
 /*********************************************************************
@@ -65,6 +70,10 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 0, 110, 240, 240, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_1, 4, 90, 80, 20, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
+  { TEXT_CreateIndirect, "Voltage1", ID_TEXT_2, 10, 50, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Voltage2", ID_TEXT_3, 100, 50, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Voltage3", ID_TEXT_4, 10, 70, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Voltage4", ID_TEXT_5, 100, 70, 80, 20, 0, 0x64, 0 },
   // USER END
 };
 
@@ -82,22 +91,46 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
  * @retval 无
  */
 void UpdateGraph(void) {
+	WM_HWIN hItem;
+	
     uint16_t voltage1 = Get_CAN_Voltage(1);  // 获取电压1（单位毫伏）
     uint16_t voltage2 = Get_CAN_Voltage(2);  // 获取电压2（单位毫伏）
     uint16_t voltage3 = Get_CAN_Voltage(3);  // 获取电压3（单位毫伏）
     uint16_t voltage4 = Get_CAN_Voltage(4);  // 获取电压4（单位毫伏）
 
     // 将毫伏转换为伏特
-    float voltage1V = voltage1 / 100.0f;
-    float voltage2V = voltage2 / 100.0f;
-    float voltage3V = voltage3 / 100.0f;
-    float voltage4V = voltage4 / 100.0f;
+    float voltage1V = voltage1 / 1000.0f;
+    float voltage2V = voltage2 / 1000.0f;
+    float voltage3V = voltage3 / 1000.0f;
+    float voltage4V = voltage4 / 1000.0f;
 
-    // 为每条曲线添加新的电压值
-    GRAPH_DATA_YT_AddValue(hGraphData1, voltage1V);
-    GRAPH_DATA_YT_AddValue(hGraphData2, voltage2V);
-    GRAPH_DATA_YT_AddValue(hGraphData3, voltage3V);
-    GRAPH_DATA_YT_AddValue(hGraphData4, voltage4V);
+	
+    // 为每条曲线添加新的电压值，需要根据Y轴刻度因子进行转换
+    GRAPH_DATA_YT_AddValue(hGraphData1, (voltage1V)*10);
+    GRAPH_DATA_YT_AddValue(hGraphData2, (voltage2V)*10);
+    GRAPH_DATA_YT_AddValue(hGraphData3, (voltage3V)*10);
+    GRAPH_DATA_YT_AddValue(hGraphData4, (voltage4V)*10);
+	
+	    // 更新电压文本显示
+    sprintf(voltageText, "V1: %.2fV", voltage1V);
+    hItem = WM_GetDialogItem(WM_HBKWIN, ID_TEXT_2);  // 获取电压1的文本控件
+    TEXT_SetText(hItem, voltageText);
+	TEXT_SetTextColor(hItem, GUI_GREEN);  // 设置文本颜色为绿色
+
+    sprintf(voltageText, "V2: %.2fV", voltage2V);
+    hItem = WM_GetDialogItem(WM_HBKWIN, ID_TEXT_3);  // 获取电压2的文本控件
+    TEXT_SetText(hItem, voltageText);
+	TEXT_SetTextColor(hItem, GUI_RED);  // 设置文本颜色为红色
+
+    sprintf(voltageText, "V3: %.2fV", voltage3V);
+    hItem = WM_GetDialogItem(WM_HBKWIN, ID_TEXT_4);  // 获取电压3的文本控件
+    TEXT_SetText(hItem, voltageText);
+	TEXT_SetTextColor(hItem, GUI_BLUE);  // 设置文本颜色为蓝色
+
+    sprintf(voltageText, "V4: %.2fV", voltage4V);
+    hItem = WM_GetDialogItem(WM_HBKWIN, ID_TEXT_5);  // 获取电压4的文本控件
+    TEXT_SetText(hItem, voltageText);
+	TEXT_SetTextColor(hItem, GUI_YELLOW);  // 设置文本颜色为黄色
 }
 
 /*********************************************************************
@@ -127,10 +160,10 @@ void GRAPH_Voltage(WM_HWIN hWin) {
     GRAPH_SCALE_SetFactor(hScaleY, 0.1);  // 设置Y轴刻度为10*0.1=1，即每个刻度代表1
 
     // 创建四条曲线数据对象
-    hGraphData1 = GRAPH_DATA_YT_Create(GUI_GREEN, 100, NULL, 0);
-    hGraphData2 = GRAPH_DATA_YT_Create(GUI_RED, 100, NULL, 0);
-    hGraphData3 = GRAPH_DATA_YT_Create(GUI_BLUE, 100, NULL, 0);
-    hGraphData4 = GRAPH_DATA_YT_Create(GUI_YELLOW, 100, NULL, 0);
+    hGraphData1 = GRAPH_DATA_YT_Create(GUI_GREEN, 1000, NULL, 0);
+    hGraphData2 = GRAPH_DATA_YT_Create(GUI_RED, 1000, NULL, 0);
+    hGraphData3 = GRAPH_DATA_YT_Create(GUI_BLUE, 1000, NULL, 0);
+    hGraphData4 = GRAPH_DATA_YT_Create(GUI_YELLOW, 1000, NULL, 0);
 
     // 将曲线添加到 Graph 控件中
     GRAPH_AttachData(hGraph, hGraphData1);
@@ -138,8 +171,8 @@ void GRAPH_Voltage(WM_HWIN hWin) {
     GRAPH_AttachData(hGraph, hGraphData3);
     GRAPH_AttachData(hGraph, hGraphData4);
 
-    // 创建并启动定时器，每 500ms 触发一次
-    WM_CreateTimer(hWin, ID_TIMER_UPDATE, 500, 0);
+    // 创建并启动定时器，每 90ms 触发一次
+    WM_CreateTimer(hWin, ID_TIMER_UPDATE, 90, 0);
 }
 
 // USER END
@@ -182,7 +215,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     if (WM_GetTimerId(pMsg->Data.v) == ID_TIMER_UPDATE) 
 	{
       UpdateGraph();  // 更新 Graph 数据
-      WM_RestartTimer(pMsg->Data.v, 500);
+      WM_RestartTimer(pMsg->Data.v, 90);
     }
     // USER END
     break;
@@ -208,13 +241,10 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 WM_HWIN Voltage(void);
 WM_HWIN Voltage(void) {
   WM_HWIN hWin;
-  // 清空屏幕，避免显示旧的内容
-  GUI_Clear();
-  // 延时，确保显示更新
-  GUI_Delay(10);
 	
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
+
 }
 
 // USER START (Optionally insert additional public code)
