@@ -1,5 +1,5 @@
 ..\..\output\voltage.o: ..\..\EMWinApp\Voltage.c
-..\..\output\voltage.o: ..\..\User\./can/bsp_can.h
+..\..\output\voltage.o: ..\..\User\can\bsp_can.h
 ..\..\output\voltage.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\voltage.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\voltage.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

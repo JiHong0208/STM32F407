@@ -1,5 +1,5 @@
 ..\..\output\bsp_can.o: ..\..\User\can\bsp_can.c
-..\..\output\bsp_can.o: ..\..\User\./can/bsp_can.h
+..\..\output\bsp_can.o: ..\..\User\can\bsp_can.h
 ..\..\output\bsp_can.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_can.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_can.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

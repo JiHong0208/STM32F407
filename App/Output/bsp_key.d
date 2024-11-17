@@ -1,5 +1,5 @@
 ..\..\output\bsp_key.o: ..\..\User\key\bsp_key.c
-..\..\output\bsp_key.o: ..\..\User\./key/bsp_key.h
+..\..\output\bsp_key.o: ..\..\User\key\bsp_key.h
 ..\..\output\bsp_key.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_key.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_key.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

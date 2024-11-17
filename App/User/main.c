@@ -1,11 +1,11 @@
 #include <stdio.h>  
 #include "stm32f4xx.h"
-#include "./usart/bsp_debug_usart.h"
-#include "./lcd/bsp_ili9341_lcd.h"
-#include "./tim/bsp_basic_tim.h"
-#include "./key/bsp_key.h"
-#include "./led/bsp_led.h"
-#include "./can/bsp_can.h"
+#include "bsp_debug_usart.h"
+#include "bsp_ili9341_lcd.h"
+#include "bsp_basic_tim.h"
+#include "bsp_key.h"
+#include "bsp_led.h"
+#include "bsp_can.h"
 #include "GUI.h"
 #include "DIALOG.h"
 #include "START.h"
@@ -97,11 +97,7 @@ int main(void)
 		}
 		
 		if(CANRxflag==1)
-		{		
-			printf("\r\nCAN接收到数据：\r\n");	
-
-			CAN_DEBUG_ARRAY(RxMessage.Data,8); 
-			
+		{			
 			// 处理 CAN 数据，解析电压值
             Process_CAN_Voltage(RxMessage.Data);
 			

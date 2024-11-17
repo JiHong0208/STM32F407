@@ -1,5 +1,5 @@
 ..\..\output\bsp_ili9341_lcd.o: ..\..\User\lcd\bsp_ili9341_lcd.c
-..\..\output\bsp_ili9341_lcd.o: ..\..\User\./lcd/bsp_ili9341_lcd.h
+..\..\output\bsp_ili9341_lcd.o: ..\..\User\lcd\bsp_ili9341_lcd.h
 ..\..\output\bsp_ili9341_lcd.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_ili9341_lcd.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_ili9341_lcd.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

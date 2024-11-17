@@ -1,5 +1,5 @@
 ..\..\output\bsp_led.o: ..\..\User\led\bsp_led.c
-..\..\output\bsp_led.o: ..\..\User\./led/bsp_led.h
+..\..\output\bsp_led.o: ..\..\User\led\bsp_led.h
 ..\..\output\bsp_led.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_led.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_led.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

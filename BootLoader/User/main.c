@@ -1,8 +1,10 @@
 #include "stm32f4xx.h"
-#include "./usart/bsp_debug_usart.h"
-#include "./key/bsp_key.h"
-#include "./led/bsp_led.h"
-
+#include "bsp_debug_usart.h"
+#include "bsp_key.h"
+#include "bsp_led.h"
+#include "stm32f4xx_gpio.h"
+#include "stm32f4xx_usart.h"
+#include "stm32f4xx_rcc.h"
 
 #define APP_ADDRESS 0x08020000
 

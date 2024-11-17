@@ -1,5 +1,8 @@
-#include "./usart/bsp_debug_usart.h"
-
+#include "bsp_debug_usart.h"
+#include "stm32f4xx_gpio.h"
+#include "stm32f4xx_usart.h"
+#include "stm32f4xx_rcc.h"
+#include "misc.h"
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC

@@ -1,5 +1,5 @@
-#include "./lcd/bsp_ili9341_lcd.h"
-#include "./font/fonts.h"	
+#include "bsp_ili9341_lcd.h"
+#include "fonts.h"	
 #include <stdio.h>
 #include <string.h>
 

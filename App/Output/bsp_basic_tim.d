@@ -1,5 +1,5 @@
 ..\..\output\bsp_basic_tim.o: ..\..\User\tim\bsp_basic_tim.c
-..\..\output\bsp_basic_tim.o: ..\..\User\./tim/bsp_basic_tim.h
+..\..\output\bsp_basic_tim.o: ..\..\User\tim\bsp_basic_tim.h
 ..\..\output\bsp_basic_tim.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_basic_tim.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_basic_tim.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

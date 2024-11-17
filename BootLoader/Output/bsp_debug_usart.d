@@ -1,5 +1,5 @@
 ..\..\output\bsp_debug_usart.o: ..\..\User\usart\bsp_debug_usart.c
-..\..\output\bsp_debug_usart.o: ..\..\User\./usart/bsp_debug_usart.h
+..\..\output\bsp_debug_usart.o: ..\..\User\usart\bsp_debug_usart.h
 ..\..\output\bsp_debug_usart.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_debug_usart.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_debug_usart.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

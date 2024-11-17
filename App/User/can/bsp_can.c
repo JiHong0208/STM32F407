@@ -1,4 +1,4 @@
-#include "./can/bsp_can.h"
+#include "bsp_can.h"
 #include <stdio.h>
 
 
@@ -48,10 +48,10 @@ static void CAN_GPIO_Config(void)
 static void CAN_NVIC_Config(void)
 {
    	NVIC_InitTypeDef NVIC_InitStructure;
-		/* Configure one bit for preemption priority */
-		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-	 	/*中断设置*/
-		NVIC_InitStructure.NVIC_IRQChannel = CAN_RX_IRQ;	   //CAN RX0中断
+	/* Configure one bit for preemption priority */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+	/*中断设置*/
+	NVIC_InitStructure.NVIC_IRQChannel = CAN_RX_IRQ;	   //CAN RX0中断
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;		   //抢占优先级0
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			   //子优先级为0
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -112,8 +112,8 @@ static void CAN_Filter_Config(void)
 	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	//筛选器位宽为单个32位。
 	/* 使能筛选器，按照标志的内容进行比对筛选，扩展ID不是如下的就抛弃掉，是的话，会存入FIFO0。 */
 
-	CAN_FilterInitStructure.CAN_FilterIdHigh= ((((u32)0x1314<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF0000)>>16;		//要筛选的ID高位 
-	CAN_FilterInitStructure.CAN_FilterIdLow= (((u32)0x1314<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF; //要筛选的ID低位 
+	CAN_FilterInitStructure.CAN_FilterIdHigh = ((((uint32_t)0x1314u << 3) | ((uint32_t)0x00000004u) | ((uint32_t)0x00000000u)) & 0xFFFF0000u) >> 16;//要筛选的ID高位 
+	CAN_FilterInitStructure.CAN_FilterIdLow = ((((uint32_t)0x1314u << 3) | (uint32_t)CAN_ID_EXT | (uint32_t)CAN_RTR_DATA) & 0xFFFFu);//要筛选的ID低位 
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			//筛选器高16位每位必须匹配
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;			//筛选器低16位每位必须匹配
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;				//筛选器被关联到FIFO0
@@ -204,13 +204,12 @@ static uint16_t g_voltage4 = 0;
 void Process_CAN_Voltage(uint8_t* data)
 {
     // 解析报文中的电压值，每两个字节倒序转换
-    g_voltage1 = (data[1] << 8) | data[0];
-    g_voltage2 = (data[3] << 8) | data[2];
-    g_voltage3 = (data[5] << 8) | data[4];
-    g_voltage4 = (data[7] << 8) | data[6];
+	g_voltage1 = (uint16_t)(((uint16_t)data[1] << 8) | (uint16_t)data[0]);
+	g_voltage2 = (uint16_t)(((uint16_t)data[3] << 8) | (uint16_t)data[2]);
+	g_voltage3 = (uint16_t)(((uint16_t)data[5] << 8) | (uint16_t)data[4]);
+	g_voltage4 = (uint16_t)(((uint16_t)data[7] << 8) | (uint16_t)data[6]);
 
-    // 调试输出电压值
-    printf("电压1: %dmV, 电压2: %dmV, 电压3: %dmV, 电压4: %dmV\r\n",g_voltage1, g_voltage2, g_voltage3, g_voltage4);
+
 }
 
 /**
@@ -220,15 +219,30 @@ void Process_CAN_Voltage(uint8_t* data)
   */
 uint16_t Get_CAN_Voltage(uint8_t voltageIndex)
 {
+    uint16_t voltage = 0;
+
     switch (voltageIndex)
     {
-        case 1: return g_voltage1;
-        case 2: return g_voltage2;
-        case 3: return g_voltage3;
-        case 4: return g_voltage4;
-        default: return 0; // 错误处理，返回0表示无效电压
+        case 1:
+            voltage = g_voltage1;
+            break;
+        case 2:
+            voltage = g_voltage2;
+            break;
+        case 3:
+            voltage = g_voltage3;
+            break;
+        case 4:
+            voltage = g_voltage4;
+            break;
+        default:
+            voltage = 0; // 错误处理，返回0表示无效电压
+            break;
     }
+
+    return voltage;
 }
+
 
 /**************************END OF FILE************************************/
 

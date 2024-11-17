@@ -1,4 +1,4 @@
-#include "./tim/bsp_basic_tim.h"
+#include "bsp_basic_tim.h"
 
 
  /**

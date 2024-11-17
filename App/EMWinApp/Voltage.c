@@ -19,7 +19,7 @@
 */
 
 // USER START (Optionally insert additional includes)
-#include "./can/bsp_can.h"
+#include "bsp_can.h"
 // USER END
 
 #include "DIALOG.h"
@@ -70,10 +70,10 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 0, 110, 240, 240, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_1, 4, 90, 80, 20, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
-  { TEXT_CreateIndirect, "Voltage1", ID_TEXT_2, 10, 50, 80, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Voltage2", ID_TEXT_3, 100, 50, 80, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Voltage3", ID_TEXT_4, 10, 70, 80, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Voltage4", ID_TEXT_5, 100, 70, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "V1", ID_TEXT_2, 10, 50, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "V2", ID_TEXT_3, 100, 50, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "V3", ID_TEXT_4, 10, 70, 80, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "V4", ID_TEXT_5, 100, 70, 80, 20, 0, 0x64, 0 },
   // USER END
 };
 

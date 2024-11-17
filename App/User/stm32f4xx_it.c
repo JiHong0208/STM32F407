@@ -29,8 +29,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
-#include "./can/bsp_can.h"
-#include "./tim/bsp_basic_tim.h"
+#include "bsp_can.h"
+#include "bsp_basic_tim.h"
 #include "GUI.h"
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
