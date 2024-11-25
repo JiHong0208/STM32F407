@@ -1,7 +1,6 @@
-#include "bsp_can.h"
 #include <stdio.h>
-
-
+#include "bsp_can.h"
+#include "xcpBasic.h"
 
 /*
  * 函数名：CAN_GPIO_Config
@@ -114,8 +113,10 @@ static void CAN_Filter_Config(void)
 
 	CAN_FilterInitStructure.CAN_FilterIdHigh = ((((uint32_t)0x1314u << 3) | ((uint32_t)0x00000004u) | ((uint32_t)0x00000000u)) & 0xFFFF0000u) >> 16;//要筛选的ID高位 
 	CAN_FilterInitStructure.CAN_FilterIdLow = ((((uint32_t)0x1314u << 3) | (uint32_t)CAN_ID_EXT | (uint32_t)CAN_RTR_DATA) & 0xFFFFu);//要筛选的ID低位 
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			//筛选器高16位每位必须匹配
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;			//筛选器低16位每位必须匹配
+//	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			//筛选器高16位每位必须匹配
+//	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0x0000;			//筛选器高16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0x0000;		    //筛选器低16位每位必须匹配
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;				//筛选器被关联到FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			//使能筛选器
 	CAN_FilterInit(&CAN_FilterInitStructure);
@@ -242,6 +243,7 @@ uint16_t Get_CAN_Voltage(uint8_t voltageIndex)
 
     return voltage;
 }
+
 
 
 /**************************END OF FILE************************************/

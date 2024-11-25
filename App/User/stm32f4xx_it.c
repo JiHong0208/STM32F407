@@ -28,10 +28,13 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_it.h"
-#include "bsp_can.h"
-#include "bsp_basic_tim.h"
 #include "GUI.h"
+#include "bsp_can.h"
+#include "xcpBasic.h"
+#include "stm32f4xx_it.h"
+#include "bsp_basic_tim.h"
+
+
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -154,40 +157,54 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
-extern volatile GUI_TIMER_TIME OS_TimeMS;	
-void  BASIC_TIM_IRQHandler (void)
+	
+extern volatile GUI_TIMER_TIME OS_TimeMS;  // emWin 系统时间计数器
+extern __IO uint32_t CANRxflag;           // 标志是否接收到数据
+extern CanRxMsg RxMessage;                // CAN 接收缓冲区
+
+/**
+  * @brief  This function handles TIM interrupt request.
+  * @param  None
+  * @retval None
+  */
+void BASIC_TIM_IRQHandler(void)
 {
-	OS_TimeMS++;
-	if ( TIM_GetITStatus( BASIC_TIM, TIM_IT_Update) != RESET ) 
-	{	
-		TIM_ClearITPendingBit(BASIC_TIM , TIM_IT_Update);  		 
-	}		 	
+    OS_TimeMS++;  // emWin 系统时间更新
+
+    if (TIM_GetITStatus(BASIC_TIM, TIM_IT_Update) != RESET) {
+        TIM_ClearITPendingBit(BASIC_TIM, TIM_IT_Update);
+    }
 }
 
 /**
-  * @}
-  */ 
-/**
-  * @}
-  */ 
-
-extern __IO uint32_t CANRxflag ;		 //用于标志是否接收到数据，在中断函数中赋值
-extern CanRxMsg RxMessage;				 //接收缓冲区
-
+  * @brief  This function handles CAN RX interrupt request.
+  * @param  None
+  * @retval None
+  */
 void CAN_RX_IRQHandler(void)
 {
-	/*从邮箱中读出报文*/
-	CAN_Receive(CANx, CAN_FIFO0, &RxMessage);
+    /* 从邮箱中读取报文 */
+    CAN_Receive(CANx, CAN_FIFO0, &RxMessage);
 
-	/* 比较ID是否为0x1314 */ 
-	if((RxMessage.ExtId==0x1314) && (RxMessage.IDE==CAN_ID_EXT) && (RxMessage.DLC==8) )
-	{
-	CANRxflag = 1; 					       //接收成功  
-	}
-	else
-	{
-	CANRxflag = 0; 					   //接收失败
-	}
+    /* 检查是否为 XCP 报文 */
+    if ((RxMessage.ExtId == 0x1234) && 
+        (RxMessage.IDE == CAN_ID_EXT) && 
+        (RxMessage.DLC == 8)) 
+    {
+        /* 调用 XCP 的接收处理函数 */
+        XcpRxHandler(RxMessage.Data);
+    } 
+    else if ((RxMessage.ExtId == 0x1314) && 
+             (RxMessage.IDE == CAN_ID_EXT) && 
+             (RxMessage.DLC == 8)) 
+    {
+        /* 处理原有的 0x1314 报文 */
+        CANRxflag = 1;  // 接收成功  
+    } 
+    else 
+    {
+        CANRxflag = 0;  // 接收失败
+    }
 }
 /**
   * @}

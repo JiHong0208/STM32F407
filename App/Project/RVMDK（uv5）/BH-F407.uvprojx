@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>CAN</TargetName>
+      <TargetName>App</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\EMWin\Config;..\..\EMWin\inc;..\..\EMWinApp;..\..\User\usart;..\..\User\tim;..\..\User\led;..\..\User\lcd;..\..\User\key;..\..\User\font;..\..\User\can</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\EMWin\Config;..\..\EMWin\inc;..\..\EMWinApp;..\..\User\usart;..\..\User\tim;..\..\User\led;..\..\User\lcd;..\..\User\key;..\..\User\font;..\..\User\can;..\..\XCPDriver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -767,14 +767,9 @@
               <FilePath>..\..\User\main.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_it.c</FileName>
+              <FileName>fonts.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\stm32f4xx_it.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_debug_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\usart\bsp_debug_usart.c</FilePath>
+              <FilePath>..\..\User\font\fonts.c</FilePath>
             </File>
             <File>
               <FileName>bsp_led.c</FileName>
@@ -792,19 +787,14 @@
               <FilePath>..\..\User\can\bsp_can.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_conf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\stm32f4xx_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_it.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\stm32f4xx_it.h</FilePath>
-            </File>
-            <File>
-              <FileName>fonts.c</FileName>
+              <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\font\fonts.c</FilePath>
+              <FilePath>..\..\User\stm32f4xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_basic_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\tim\bsp_basic_tim.c</FilePath>
             </File>
             <File>
               <FileName>bsp_ili9341_lcd.c</FileName>
@@ -812,14 +802,14 @@
               <FilePath>..\..\User\lcd\bsp_ili9341_lcd.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_basic_tim.h</FileName>
+              <FileName>stm32f4xx_conf.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\User\tim\bsp_basic_tim.h</FilePath>
+              <FilePath>..\..\User\stm32f4xx_conf.h</FilePath>
             </File>
             <File>
-              <FileName>bsp_basic_tim.c</FileName>
+              <FileName>bsp_debug_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\tim\bsp_basic_tim.c</FilePath>
+              <FilePath>..\..\User\usart\bsp_debug_usart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -837,24 +827,14 @@
           <GroupName>EMWin</GroupName>
           <Files>
             <File>
+              <FileName>GUI_X.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\EMWin\Config\GUI_X.c</FilePath>
+            </File>
+            <File>
               <FileName>GUIConf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\EMWin\Config\GUIConf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIConf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\EMWin\Config\GUIConf.h</FilePath>
-            </File>
-            <File>
-              <FileName>LCDConf_FlexColor_Template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\EMWin\Config\LCDConf_FlexColor_Template.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCDConf_FlexColor_Template.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\EMWin\Config\LCDConf_FlexColor_Template.h</FilePath>
             </File>
             <File>
               <FileName>STemWin532_CM4_Keil.lib</FileName>
@@ -862,9 +842,9 @@
               <FilePath>..\..\EMWin\Lib\STemWin532_CM4_Keil.lib</FilePath>
             </File>
             <File>
-              <FileName>GUI_X.c</FileName>
+              <FileName>LCDConf_FlexColor_Template.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\EMWin\Config\GUI_X.c</FilePath>
+              <FilePath>..\..\EMWin\Config\LCDConf_FlexColor_Template.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -877,19 +857,29 @@
               <FilePath>..\..\EMWinApp\START.c</FilePath>
             </File>
             <File>
-              <FileName>START.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\EMWinApp\START.h</FilePath>
-            </File>
-            <File>
               <FileName>Voltage.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\EMWinApp\Voltage.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>XCPDriver</GroupName>
+          <Files>
             <File>
-              <FileName>Voltage.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\EMWinApp\Voltage.h</FilePath>
+              <FileName>xcp_par.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\XCPDriver\xcp_par.c</FilePath>
+            </File>
+            <File>
+              <FileName>xcp_appl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\XCPDriver\xcp_appl.c</FilePath>
+            </File>
+            <File>
+              <FileName>XcpBasic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\XCPDriver\XcpBasic.c</FilePath>
             </File>
           </Files>
         </Group>

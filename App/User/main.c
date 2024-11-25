@@ -1,27 +1,30 @@
+#include "GUI.h"
+#include "START.h"
 #include <stdio.h>  
-#include "stm32f4xx.h"
-#include "bsp_debug_usart.h"
-#include "bsp_ili9341_lcd.h"
-#include "bsp_basic_tim.h"
+#include <stdint.h>
+#include "DIALOG.h"
 #include "bsp_key.h"
 #include "bsp_led.h"
 #include "bsp_can.h"
-#include "GUI.h"
-#include "DIALOG.h"
-#include "START.h"
 #include "Voltage.h"
+#include "xcpBasic.h"
+#include "stm32f4xx.h"
+#include "bsp_basic_tim.h"
+#include "bsp_debug_usart.h"
+#include "bsp_ili9341_lcd.h"
 
-// 定义 app 的起始地址宏
+
+// 定义 App 的起始地址宏
 #define APP_BASE_ADDRESS  0x08020000
 
 // 声明初始化函数
 void App_Init(void);
 
-__IO uint32_t CANRxflag = 0;		 //用于标志是否接收到数据，在中断函数中赋值
+__IO uint32_t CANRxflag = 0;	 //用于标志是否接收到数据，在中断函数中赋值
 CanTxMsg TxMessage;			     //发送缓冲区
 CanRxMsg RxMessage;				 //接收缓冲区
-__IO uint8_t key1_pressed = 0;  // 标记 KEY1 是否已经按下
-__IO uint8_t key2_pressed = 0;  // 标记 KEY2 是否已经按下
+__IO uint8_t key1_pressed = 0;   // 标记 KEY1 是否已经按下
+__IO uint8_t key2_pressed = 0;   // 标记 KEY2 是否已经按下
 
 
 static void Delay ( __IO uint32_t nCount );
@@ -51,6 +54,9 @@ int main(void)
 	
 	/* 初始化can,在中断接收CAN数据包 */
 	CAN_Config();
+	
+	/* 初始化XCP协议栈 */
+	XcpInit();
 
     /* 启用 CRC 校验，用于 emWin 库保护 */
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);  
@@ -60,8 +66,7 @@ int main(void)
 		
 	/* LCD初始界面 */
 	LCD_Start();
-	
-	
+
 	while(1)
 	{
 
