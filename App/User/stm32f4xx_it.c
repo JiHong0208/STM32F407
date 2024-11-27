@@ -167,6 +167,8 @@ extern CanRxMsg RxMessage;                // CAN 接收缓冲区
   * @param  None
   * @retval None
   */
+uint32_t szf=0;
+
 void BASIC_TIM_IRQHandler(void)
 {
     OS_TimeMS++;  // emWin 系统时间更新
@@ -174,6 +176,8 @@ void BASIC_TIM_IRQHandler(void)
     if (TIM_GetITStatus(BASIC_TIM, TIM_IT_Update) != RESET) {
         TIM_ClearITPendingBit(BASIC_TIM, TIM_IT_Update);
     }
+	szf++;
+
 }
 
 /**

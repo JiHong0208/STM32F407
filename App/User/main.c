@@ -67,12 +67,13 @@ int main(void)
 	/* LCD初始界面 */
 	LCD_Start();
 
+
 	while(1)
 	{
 
 		// 调用 GUI_Delay() 以处理窗口消息
 		GUI_Delay(10);
-		
+
 		/* 检测KEY1按键，按下时显示电压信息 */
 		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
 		{
@@ -90,6 +91,7 @@ int main(void)
 			
 			//将发送电压显示到LCD屏幕
 			Voltage();
+
 		}
 		
 		/* 检测KEY2按键，按下时显示电压信息 */
