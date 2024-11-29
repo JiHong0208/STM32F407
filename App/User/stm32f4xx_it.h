@@ -51,6 +51,9 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
+
+extern volatile uint32_t DAQ_Timestamp;   // ÉùÃ÷ DAQ_Timestamp
+
 #ifdef __cplusplus
 }
 #endif

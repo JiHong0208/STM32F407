@@ -157,9 +157,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>2539</LineNumber>
+          <LineNumber>1152</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134386458</Address>
+          <Address>134387644</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -168,23 +168,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>D:\Desktop\STM32F407\App\Project\XCPDriver\XcpBasic.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Template\../../XCPDriver/XcpBasic.c\2539</Expression>
+          <Expression>\\Template\../../XCPDriver/XcpBasic.c\1152</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>2553</LineNumber>
+          <LineNumber>1156</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134387646</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\XCPDriver\XcpBasic.c</Filename>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>D:\Desktop\STM32F407\App\Project\XCPDriver\XcpBasic.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\Template\../../XCPDriver/XcpBasic.c\1156</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -267,6 +267,61 @@
           <count>15</count>
           <WinNumber>1</WinNumber>
           <ItemText>*(addr)</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>daq</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>event</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>CRM_GET_DAQ_EVENT_INFO_PROPERTIES</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>CRM_GET_DAQ_EVENT_INFO_TIME_UNIT</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>daq</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>DAQ_Timestamp</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>daq</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>DAQ_Timestamp</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>OS_TimeMS</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Measurement</ItemText>
+        </Ww>
+        <Ww>
+          <count>26</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>counter</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

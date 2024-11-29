@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
+              <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\EMWin\Config;..\..\EMWin\inc;..\..\EMWinApp;..\..\User\usart;..\..\User\tim;..\..\User\led;..\..\User\lcd;..\..\User\key;..\..\User\font;..\..\User\can;..\..\XCPDriver</IncludePath>
             </VariousControls>

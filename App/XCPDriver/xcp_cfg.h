@@ -65,6 +65,16 @@ typedef unsigned char XcpCharType;
 #define XCP_DISABLE_DAQ_EVENT_INFO
 #define XCP_DISABLE_PROGRAM
 #define XCP_ENABLE_PROGRAMMING_WRITE_PROTECTION
+
+
+#define XCP_ENABLE_DAQ_TIMESTAMP
+#define kXcpDaqTimestampSize DAQ_TIMESTAMP_WORD
+#define kXcpDaqTimestampUnit DAQ_TIMESTAMP_UNIT_1MS
+#define kXcpDaqTimestampTicksPerUnit 10
+
+#define XCP_ENABLE_DAQ_EVENT_INFO
+#define XCP_ENABLE_PARAMETER_CHECK
+
 #else
 #define XCP_DISABLE_DAQ
 #endif

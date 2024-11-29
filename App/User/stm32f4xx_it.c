@@ -158,7 +158,7 @@ void SysTick_Handler(void)
   * @retval None
   */
 	
-extern volatile GUI_TIMER_TIME OS_TimeMS;  // emWin 系统时间计数器
+extern volatile GUI_TIMER_TIME OS_TimeMS; // emWin 系统时间计数器
 extern __IO uint32_t CANRxflag;           // 标志是否接收到数据
 extern CanRxMsg RxMessage;                // CAN 接收缓冲区
 
@@ -167,16 +167,28 @@ extern CanRxMsg RxMessage;                // CAN 接收缓冲区
   * @param  None
   * @retval None
   */
-uint32_t szf=0;
+uint32_t Measurement=0; //XCP观测量
+volatile uint32_t DAQ_Timestamp = 0; // XCP的DAQ 时间戳，单位：10ms
 
 void BASIC_TIM_IRQHandler(void)
 {
+	static uint8_t counter = 0; // 中断计数器
+	
     OS_TimeMS++;  // emWin 系统时间更新
-
+	Measurement++;//XCP观测量
+	counter++;
+	
     if (TIM_GetITStatus(BASIC_TIM, TIM_IT_Update) != RESET) {
         TIM_ClearITPendingBit(BASIC_TIM, TIM_IT_Update);
     }
-	szf++;
+	if (counter >= 10) 
+	{ // 每 10 次中断（10ms）更新一次 DAQ 时间戳
+            counter = 0;     // 重置计数器
+            DAQ_Timestamp++; // 时间戳增加 1（10ms 单位）
+		
+			XcpEvent(0);   // 通知 XCP 事件，10ms事件
+    }
+
 
 }
 

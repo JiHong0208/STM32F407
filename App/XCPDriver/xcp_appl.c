@@ -74,7 +74,7 @@
 #include <string.h>
 
 #include "XcpBasic.h"
-
+#include "stm32f4xx_it.h"
 
 /***************************************************************************/
 /* Version check                                                           */
@@ -161,8 +161,8 @@ void ApplXcpBackground(void)
 XcpDaqTimestampType ApplXcpGetTimestamp(void)
 {
     /* Adapt this function to return a valid timestamp and remove the error message */
-#error "The function ApplXcpGetTimestamp must return a valid timestamp"
-    return (XcpDaqTimestampType)0u;
+//#error "The function ApplXcpGetTimestamp must return a valid timestamp"
+    return (XcpDaqTimestampType)DAQ_Timestamp;
 }
 #endif /* XCP_ENABLE_DAQ_TIMESTAMP */
 
