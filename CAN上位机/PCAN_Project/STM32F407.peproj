@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PCANExplorerProject Version="5.0" Name="STM32F407">
+    <Connections AutoReset="0" IgnoreRTRLength="0" ProcessRTR="1">
+        <Connection Bus="1" Enabled="1" Protocol="0" BitRate="20" Connection="STM32F407@pcan_usb" Name="STM32F407"/>
+    </Connections>
+    <MessageFilters/>
+    <Files>
+        <File RelativePath="XCP_DAQ.mcr"/>
+    </Files>
+</PCANExplorerProject>
