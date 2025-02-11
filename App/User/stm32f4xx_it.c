@@ -173,6 +173,7 @@ volatile uint32_t DAQ_Timestamp = 0; // XCP的DAQ 时间戳，单位：10ms
 void BASIC_TIM_IRQHandler(void)
 {
 	static uint8_t counter = 0; // 中断计数器
+	static uint8_t CANSendcount = 0; //设置CAN报文发送周期计数器
 	
     OS_TimeMS++;  // emWin 系统时间更新
 	Measurement++;//XCP观测量
@@ -181,13 +182,21 @@ void BASIC_TIM_IRQHandler(void)
     if (TIM_GetITStatus(BASIC_TIM, TIM_IT_Update) != RESET) {
         TIM_ClearITPendingBit(BASIC_TIM, TIM_IT_Update);
     }
+	//通过遍历10次中断，实现10ms事件
 	if (counter >= 10) 
-	{ // 每 10 次中断（10ms）更新一次 DAQ 时间戳
-            counter = 0;     // 重置计数器
-            DAQ_Timestamp++; // 时间戳增加 1（10ms 单位）
+	{ 
+        counter = 0;     // 重置计数器
+        DAQ_Timestamp++; // 时间戳增加 1（10ms 单位）
 		
-			XcpEvent(0);   // 通知 XCP 事件，10ms事件
+		XcpEvent(0);   // 通知 XCP 事件，10ms事件
+		CANSendcount++;
     }
+	//通过遍历10次10ms事件，设置CAN随机报文发送周期(100ms)
+	if (CANSendcount >=10 )
+	{
+		SendCANEvent();
+		CANSendcount = 0;
+	}
 
 
 }

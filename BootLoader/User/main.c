@@ -12,7 +12,8 @@ typedef void (*pFunction)(void);
 pFunction Jump_To_Application;
 uint32_t JumpAddress;
 
-void JumpToApp(void);
+static void JumpToApp(void);
+static void BSP_Init(void);
 static void Delay(__IO uint32_t nCount);
 
 /**
@@ -20,12 +21,10 @@ static void Delay(__IO uint32_t nCount);
   * @param  无
   * @retval 无
   */
-int main(void) {
-    // 初始化系统和硬件
-    SystemInit();
-    LED_GPIO_Config();
-    Key_GPIO_Config();
-    Debug_USART_Config();
+int main(void) 
+{
+    // 初始化硬件
+	BSP_Init();
 
 	// 指示进入 Bootloader
     LED_BLUE;
@@ -45,7 +44,7 @@ int main(void) {
     }
 }
 
-void JumpToApp(void) {
+static void JumpToApp(void) {
     // 检查 APP 分区是否有效
     if (((*(__IO uint32_t*)APP_ADDRESS) & 0x2FFE0000) == 0x20000000) 
 	{
@@ -63,6 +62,15 @@ void JumpToApp(void) {
 		
 		
     }
+}
+
+static void BSP_Init(void)
+{
+	// 初始化系统和硬件
+    SystemInit();
+    LED_GPIO_Config();
+    Key_GPIO_Config();
+    Debug_USART_Config();
 }
 
 static void Delay(__IO uint32_t nCount) {

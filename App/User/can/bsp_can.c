@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "bsp_can.h"
 #include "xcpBasic.h"
+#include "stdlib.h"  // 用于随机数生成
+
+
+extern CanTxMsg TxMessage;			     //发送缓冲区
 
 /*
  * 函数名：CAN_GPIO_Config
@@ -162,6 +166,18 @@ void Init_RxMes(CanRxMsg *RxMessage)
   }
 }
 
+/**
+  * @brief  将16位电压值转换为两个字节（低字节在前，高字节在后）
+  * @param  voltage: 16位电压值
+  * @param  lowByte: 低字节
+  * @param  highByte: 高字节
+  * @retval 无
+  */
+void VoltageToBytes(uint16_t voltage, uint8_t *lowByte, uint8_t *highByte)
+{
+    *lowByte = voltage & 0xFF;          // 取低8位
+    *highByte = (voltage >> 8) & 0xFF;  // 取高8位
+}
 
 /*
  * 函数名：CAN_SetMsg
@@ -174,20 +190,32 @@ void CAN_SetMsg(CanTxMsg *TxMessage)
 {	  
 	uint8_t ubCounter = 0;
 	
-	/*设置要发送的数据*/
-    uint8_t data[8] = {0xE4, 0x0C, 0xE4, 0x0C, 0xE4, 0x0C, 0xE4, 0x0C};
+    uint8_t data[8];
 	
-  //TxMessage.StdId=0x00;						 
-  TxMessage->ExtId = 0x520;					  //使用的扩展ID，将ID设置为0x520
-  TxMessage->IDE = CAN_ID_EXT;				  //扩展模式
-  TxMessage->RTR = CAN_RTR_DATA;			  //发送的是数据
-  TxMessage->DLC = 8;						  //数据长度为8字节
+	// 生成四组随机电压值（不超过15000）
+    uint16_t voltages[4];
+    for (ubCounter = 0; ubCounter < 4; ubCounter++)
+    {
+        voltages[ubCounter] = rand() % 15001;  // 生成0-15000的随机电压值
+    }
+
+    // 将四组电压值转换为CAN报文数据
+    for (ubCounter = 0; ubCounter < 4; ubCounter++)
+    {
+        VoltageToBytes(voltages[ubCounter], &data[ubCounter * 2], &data[ubCounter * 2 + 1]);
+    }
+	
+    //TxMessage.StdId=0x00;						 
+    TxMessage->ExtId = 0x520;					  //使用的扩展ID，将ID设置为0x520
+    TxMessage->IDE = CAN_ID_EXT;				  //扩展模式
+    TxMessage->RTR = CAN_RTR_DATA;			      //发送的是数据
+    TxMessage->DLC = 8;						      //数据长度为8字节
 	
 	/*将设置好的数据发送出去*/
 	for (ubCounter = 0; ubCounter < 8; ubCounter++)
-  {
-    TxMessage->Data[ubCounter] = data[ubCounter];
-  }
+	{
+		TxMessage->Data[ubCounter] = data[ubCounter];
+	}
 }
 
 /**********************************************自添加CAN报文解析函数**********************************************/
@@ -244,8 +272,18 @@ uint16_t Get_CAN_Voltage(uint8_t voltageIndex)
     return voltage;
 }
 
-
-
+/**
+  * @brief  单片机周期向上位机PCAN发送随机报文，在基本定时器中断中可以设置发送周期
+  */
+void SendCANEvent(void)
+{
+	CAN_SetMsg(&TxMessage);
+	CAN_Transmit(CANx, &TxMessage);
+	CAN_DEBUG_ARRAY(TxMessage.Data,8); 
+	// 处理 CAN 数据，解析电压值
+    Process_CAN_Voltage(TxMessage.Data);
+    
+}
 /**************************END OF FILE************************************/
 
 

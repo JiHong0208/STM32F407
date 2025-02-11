@@ -92,9 +92,12 @@ static void CAN_NVIC_Config(void);
 static void CAN_Mode_Config(void);
 static void CAN_Filter_Config(void);
 void CAN_Config(void);
+void VoltageToBytes(uint16_t voltage, uint8_t *lowByte, uint8_t *highByte);
 void CAN_SetMsg(CanTxMsg *TxMessage);
 void Init_RxMes(CanRxMsg *RxMessage);
-
+void SendCANEvent(void);
+ 
+	
 void Process_CAN_Voltage(uint8_t* data);
 uint16_t Get_CAN_Voltage(uint8_t voltageIndex);
 #endif
