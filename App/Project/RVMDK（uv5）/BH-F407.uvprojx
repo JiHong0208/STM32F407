@@ -767,6 +767,11 @@
               <FilePath>..\..\User\main.c</FilePath>
             </File>
             <File>
+              <FileName>sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\sdio\sd.c</FilePath>
+            </File>
+            <File>
               <FileName>fonts.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\font\fonts.c</FilePath>
@@ -787,6 +792,11 @@
               <FilePath>..\..\User\can\bsp_can.c</FilePath>
             </File>
             <File>
+              <FileName>bsp_sdio_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\sdio\bsp_sdio_sd.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\stm32f4xx_it.c</FilePath>
@@ -802,19 +812,14 @@
               <FilePath>..\..\User\lcd\bsp_ili9341_lcd.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_conf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\stm32f4xx_conf.h</FilePath>
-            </File>
-            <File>
               <FileName>bsp_debug_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\usart\bsp_debug_usart.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_sdio_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\sdio\bsp_sdio_sd.c</FilePath>
+              <FileName>stm32f4xx_conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\User\stm32f4xx_conf.h</FilePath>
             </File>
           </Files>
         </Group>

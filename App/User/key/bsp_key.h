@@ -22,7 +22,7 @@
 #define KEY_OFF	0
 
 void Key_GPIO_Config(void);
-uint8_t Key_Scan(GPIO_TypeDef* GPIOx,u16 GPIO_Pin);
+uint8_t Key_Scan(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin);
 
 #endif /* __LED_H */
 

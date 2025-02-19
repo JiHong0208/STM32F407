@@ -4,7 +4,7 @@
 #include "stdlib.h"  // 用于随机数生成
 
 
-extern CanTxMsg TxMessage;			     //发送缓冲区
+extern CanTxMsg TxMessage;			     //通过CAN发送出去的模拟电压数据
 
 /*
  * 函数名：CAN_GPIO_Config
@@ -279,7 +279,12 @@ void SendCANEvent(void)
 {
 	CAN_SetMsg(&TxMessage);
 	CAN_Transmit(CANx, &TxMessage);
+	
+	//是否将CAN报文信息打印到串口中
+	#if 0
 	CAN_DEBUG_ARRAY(TxMessage.Data,8); 
+	#endif
+	
 	// 处理 CAN 数据，解析电压值
     Process_CAN_Voltage(TxMessage.Data);
     

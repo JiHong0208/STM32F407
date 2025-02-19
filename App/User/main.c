@@ -1,3 +1,4 @@
+#include "sd.h"
 #include "GUI.h"
 #include "START.h"
 #include <stdio.h>  
@@ -14,6 +15,7 @@
 #include "bsp_ili9341_lcd.h"
 
 
+
 // 定义 App 的起始地址宏
 #define APP_BASE_ADDRESS  0x08020000
 
@@ -22,11 +24,13 @@ static void App_Init(void);
 static void BSP_Init(void);
 static void Delay ( __IO uint32_t nCount );
 
-__IO uint32_t CANRxflag = 0;	 //用于标志是否接收到数据，在中断函数中赋值
-CanTxMsg TxMessage;			     //发送缓冲区
-CanRxMsg RxMessage;				 //接收缓冲区
-__IO uint8_t key1_pressed = 0;   // 标记 KEY1 是否已经按下
-__IO uint8_t key2_pressed = 0;   // 标记 KEY2 是否已经按下
+__IO uint32_t CANRxflag = 0;	            // 用于标志是否接收到数据，在中断函数中赋值
+CanTxMsg TxMessage;			                // 发送缓冲区
+CanRxMsg RxMessage;				            // 接收缓冲区
+__IO uint8_t key1_pressed = 0;              // 标记 KEY1 是否已经按下
+__IO uint8_t key2_pressed = 0;              // 标记 KEY2 是否已经按下
+volatile uint8_t StartStopVoltageFlag = 0;  // 标志位，用于暂停或开始电压信息发送和存储
+uint8_t VoltageShowCount = 0;				// 标志位，用于保证Voltage()函数只触发一次
 
 
 
@@ -48,29 +52,37 @@ int main(void)
 	// LCD初始界面
 	LCD_Start();
 
-
 	while(1)
 	{
 
 		// 调用 GUI_Delay() 以处理窗口消息
 		GUI_Delay(10);
 
-		// 检测KEY1按键，按下时显示电压信息 */
+		// 检测KEY1按键，按下时切换StartStopVoltageFlag，用于暂停或开始电压信息发送和存储
 		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
 		{
 			LED_GREEN;
 			
-			//将发送电压显示到LCD屏幕
-			Voltage();
+			// 切换标志位
+			StartStopVoltageFlag = !StartStopVoltageFlag;
+			
+			// 用于保证Voltage()函数只触发一次
+			VoltageShowCount++;
+			if (VoltageShowCount == 1)
+			{
+				Voltage();
+			}
+
 
 		}
 		
-		// 检测KEY2按键，按下时
+		// 检测KEY2按键，按下时切换StartStopVoltageFlag，用于暂停或开始电压信息发送和存储
 		if(Key_Scan(KEY2_GPIO_PORT, KEY2_PIN) == KEY_ON)
 		{
+			Delay(200);// 按键防抖设计
 			LED_PURPLE;
+			SD_Function();
 			
-
 		}
 		
 		if(CANRxflag==1)
@@ -78,7 +90,7 @@ int main(void)
 			// 处理 CAN 数据，解析电压值
             Process_CAN_Voltage(RxMessage.Data);
 			
-			CANRxflag=0;
+			CANRxflag = 0;
 		}
 
 	}
@@ -131,5 +143,8 @@ static void BSP_Init(void)
   	
 	// 初始化LCD屏幕 
 	GUI_Init(); 
+	
+	// SD卡格式化测试，检测SD卡可用性
+	SD_Test();
 		
 }

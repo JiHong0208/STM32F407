@@ -28,6 +28,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "sd.h"
 #include "GUI.h"
 #include "bsp_can.h"
 #include "xcpBasic.h"
@@ -161,6 +162,7 @@ void SysTick_Handler(void)
 extern volatile GUI_TIMER_TIME OS_TimeMS; // emWin 系统时间计数器
 extern __IO uint32_t CANRxflag;           // 标志是否接收到数据
 extern CanRxMsg RxMessage;                // CAN 接收缓冲区
+extern volatile uint8_t StartStopVoltageFlag; // 标志位，判断是否将电压数据存储进SD卡
 
 /**
   * @brief  This function handles TIM interrupt request.
@@ -192,10 +194,12 @@ void BASIC_TIM_IRQHandler(void)
 		CANSendcount++;
     }
 	//通过遍历10次10ms事件，设置CAN随机报文发送周期(100ms)
-	if (CANSendcount >=10 )
+	if (CANSendcount >= 10 && StartStopVoltageFlag==1)
 	{
 		SendCANEvent();
 		CANSendcount = 0;
+		// 每当电压信息发送时，则将电压信息储存进SD卡.csv表格
+		//SD_Function();
 	}
 
 
