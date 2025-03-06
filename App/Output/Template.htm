@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\..\Output\Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\..\Output\Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Mar 06 16:40:56 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Mar 06 21:11:23 2025
 <BR><P>
 <H3>Maximum Stack Usage =       1640 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -4247,12 +4247,13 @@ Global Symbols
 <P><STRONG><a name="[12]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40xx.o(RESET)
 </UL>
-<P><STRONG><a name="[2c2]"></a>SendCANEvent</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, bsp_can.o(i.SendCANEvent))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = SendCANEvent &rArr; CAN_SetMsg
+<P><STRONG><a name="[2c2]"></a>SendCANEvent</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, bsp_can.o(i.SendCANEvent))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = SendCANEvent &rArr; CAN_SetMsg
 </UL>
 <BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Transmit
 <LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_SetMsg
 <LI><a href="#[2c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Process_CAN_Voltage
+<LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_DAC_IRQHandler
 </UL>
@@ -4352,8 +4353,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_GetITStatus
 <LI><a href="#[2cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ClearITPendingBit
-<LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;XcpEvent
 <LI><a href="#[2c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SendCANEvent
+<LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;XcpEvent
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40xx.o(RESET)
 </UL>
@@ -5838,6 +5839,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;App_Init
+<LI><a href="#[2c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SendCANEvent
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SD_Test
 <LI><a href="#[265]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ILI9341_ReadID
 </UL>

@@ -32,8 +32,9 @@
 
 #include "FreeRTOS.h"					//FreeRTOS使用		  
 #include "task.h" 
-#include "./adc/bsp_adc.h"
-
+#include "bsp_adc.h"
+#include "bsp_can.h"
+#include "xcpBasic.h"
 
 /** @addtogroup STM32F407I_DISCOVERY_Examples
   * @{
@@ -146,6 +147,10 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f429_439xx.s).                         */
 /******************************************************************************/
 extern __IO uint16_t ADC_ConvertedValue;
+extern __IO uint32_t CANRxflag;               // 标志是否接收到数据
+extern CanRxMsg RxMessage;                    // CAN 接收缓冲区
+extern volatile uint8_t StartStopVoltageFlag; // 标志位，判断是否将电压数据存储进SD卡
+
 /**
   * @brief  ADC 转换完成中断服务程序
   * @param  None
@@ -166,7 +171,37 @@ void ADC_IRQHandler(void)
 	
 	/* 退出临界段 */
 	taskEXIT_CRITICAL_FROM_ISR(ulReturn);
-}	
+}
+/**
+  * @brief  This function handles CAN RX interrupt request.
+  * @param  None
+  * @retval None
+  */
+void CAN_RX_IRQHandler(void)
+{
+    /* 从邮箱中读取报文 */
+    CAN_Receive(CANx, CAN_FIFO0, &RxMessage);
+
+    /* 检查是否为 XCP 报文 */
+    if ((RxMessage.ExtId == 0x1234) && 
+        (RxMessage.IDE == CAN_ID_EXT) && 
+        (RxMessage.DLC == 8)) 
+    {
+        /* 调用 XCP 的接收处理函数 */
+        XcpRxHandler(RxMessage.Data);
+    } 
+    else if ((RxMessage.ExtId == 0x1314) && 
+             (RxMessage.IDE == CAN_ID_EXT) && 
+             (RxMessage.DLC == 8)) 
+    {
+        /* 处理原有的 0x1314 报文 */
+        CANRxflag = 1;  // 接收成功  
+    } 
+    else 
+    {
+        CANRxflag = 0;  // 接收失败
+    }
+}
 /**
   * @}
   */ 

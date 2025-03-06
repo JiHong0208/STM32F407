@@ -1,45 +1,25 @@
-/**
-  *********************************************************************
-  * @file    main.c
-  * @author  fire
-  * @version V1.0
-  * @date    2018-xx-xx
-  * @brief   FreeRTOS v9.0.0 + STM32 固件库实验
-  *********************************************************************
-  * @attention
-  *
-  * 实验平台:野火 STM32全系列开发板 
-  * 论坛    :http://www.firebbs.cn
-  * 淘宝    :https://fire-stm32.taobao.com
-  *
-  **********************************************************************
-  */ 
- 
-/*
-*************************************************************************
-*                             包含的头文件
-*************************************************************************
-*/ 
-/* FreeRTOS头文件 */
+// FreeRTOS头文件
 #include "FreeRTOS.h"
-#include "task.h"
 #include "semphr.h"
-/* 开发板硬件bsp头文件 */
-#include "./led/bsp_led.h"
-#include "./usart/bsp_debug_usart.h"
-#include "./key/bsp_key.h"
-#include "./lcd/bsp_ili9341_lcd.h"
-#include "./adc/bsp_adc.h"
-//#include "./flash/bsp_spi_flash.h"
-#include "./TouchPad/bsp_touchpad.h"
-#include "./beep/bsp_beep.h" 
-#include "./sram/bsp_sram.h"	  
-#include "./touch/gt5xx.h"
-/* STemWIN头文件 */
+#include "task.h"
+
+
+// 开发板硬件bsp头文件
+#include "bsp_debug_usart.h"
+#include "bsp_ili9341_lcd.h"
+#include "bsp_sram.h"	  
+#include "bsp_led.h"
+#include "bsp_key.h"
+#include "bsp_adc.h"
+#include "bsp_can.h"
+#include "sd.h"
+
+// STemWIN头文件
 #include "GUI.h"
 #include "DIALOG.h"
 
-
+// XCPDriver头文件
+#include "xcpBasic.h"
 
 /**************************** 任务句柄 ********************************/
 /* 
@@ -49,13 +29,14 @@
  */
 /* 创建任务句柄 */
 static TaskHandle_t AppTaskCreate_Handle = NULL;
-/* LED任务句柄 */
-static TaskHandle_t LED_Task_Handle = NULL;
-/* Touch任务句柄 */
-static TaskHandle_t Touch_Task_Handle = NULL;
-/* GUI任务句柄 */
+/* CAN 任务句柄 */
+static TaskHandle_t CAN_Task_Handle = NULL;
+/* XCP_Driver 任务句柄 */
+static TaskHandle_t XCP_Driver_Task_Handle = NULL;
+/* GUI 任务句柄 */
 static TaskHandle_t GUI_Task_Handle = NULL;
-
+/* SD_Card 任务句柄 */
+static TaskHandle_t SD_Card_Task_Handle = NULL;
 
 /********************************** 内核对象句柄 *********************************/
 /*
@@ -68,138 +49,163 @@ static TaskHandle_t GUI_Task_Handle = NULL;
  * 来完成的
  * 
  */
-SemaphoreHandle_t ScreenShotSem_Handle = NULL;
+SemaphoreHandle_t CanReadySem_Handle   = NULL;// 信号量句柄
 
-/******************************* 全局变量声明 ************************************/
-/*
- * 当我们在写应用程序的时候，可能需要用到一些全局变量。
- */
+ 
+// 定义 App 的起始地址宏
+#define APP_BASE_ADDRESS  0x08020000
 
-/*
-*************************************************************************
-*                             函数声明
-*************************************************************************
-*/
-static void AppTaskCreate(void);/* 用于创建任务 */
+// 定义全局变量
+volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
+__IO uint32_t CANRxflag = 0;	            // 用于标志是否接收到数据，在中断函数中赋值
+CanTxMsg TxMessage;			                // 发送缓冲区
+CanRxMsg RxMessage;				            // 接收缓冲区
 
-static void LED_Task(void* parameter);/* LED_Task任务实现 */
-static void GUI_Task(void* parameter);/* GUI_Task任务实现 */
-static void Touch_Task(void* parameter);
-static void BSP_Init(void);/* 用于初始化板载相关资源 */
+// 声明初始化函数
+static void App_Init(void);                     // 用于Bootloader跳转到App
+static void BSP_Init(void);						// 用于初始化板载相关资源
 
-/*****************************************************************
+static void AppTaskCreate(void);				// 用于创建任务
+static void CAN_Task(void* parameter);			// CAN_Task任务实现 
+static void GUI_Task(void* parameter);			// GUI_Task任务实现 
+static void XCP_Driver_Task(void* parameter);   // XCP_Driver任务实现
+static void SD_Card_Task(void* parameter);      // SD_Card任务实现
+
+/**
   * @brief  主函数
   * @param  无
   * @retval 无
-  * @note   第一步：开发板硬件初始化 
-            第二步：创建APP应用任务
-            第三步：启动FreeRTOS，开始多任务调度
-  ****************************************************************/
+  * @note   
+  */
 int main(void)
 {	
-  BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+  BaseType_t xReturn = pdPASS;// 定义一个创建信息返回值，默认为pdPASS
   
-  /* 开发板硬件初始化 */
+  // 更新APP的中断向量表和重启全局中断
+  App_Init();
+
+  // 初始化硬件
   BSP_Init();
   
-  printf("\r\n ********** emwin DEMO *********** \r\n");
-  
-   /* 创建AppTaskCreate任务 */
-  xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
-                        (const char*    )"AppTaskCreate",/* 任务名字 */
-                        (uint16_t       )512,  /* 任务栈大小 */
-                        (void*          )NULL,/* 任务入口函数参数 */
-                        (UBaseType_t    )1, /* 任务的优先级 */
-                        (TaskHandle_t*  )&AppTaskCreate_Handle);/* 任务控制块指针 */ 
-  /* 启动任务调度 */           
+  // 初始化硬件,创建AppTaskCreate任务
+  xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  		// 任务入口函数 
+                        (const char*    )"AppTaskCreate",		// 任务名字
+                        (uint16_t       )512,  			 		// 任务栈大小 
+                        (void*          )NULL,			 		// 任务入口函数参数 
+                        (UBaseType_t    )1, 				    // 任务的优先级 
+                        (TaskHandle_t*  )&AppTaskCreate_Handle);// 任务控制块指针 
+						
+  // 启动任务调度            
   if(pdPASS == xReturn)
-    vTaskStartScheduler();   /* 启动任务，开启调度 */
+    vTaskStartScheduler();   // 启动任务，开启调度
   else
     return -1;  
   
-  while(1);   /* 正常不会执行到这里 */    
+  while(1);   // 正常不会执行到这里    
 }
 
 
-/***********************************************************************
-  * @ 函数名  ： AppTaskCreate
-  * @ 功能说明： 为了方便管理，所有的任务创建函数都放在这个函数里面
-  * @ 参数    ： 无  
-  * @ 返回值  ： 无
-  **********************************************************************/
+/**
+  * @brief  AppTaskCreate
+  * @param  无
+  * @retval 无
+  * @note   为了方便管理，所有的任务创建函数都放在这个函数里面
+  */
 static void AppTaskCreate(void)
 {
-	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+	BaseType_t xReturn = pdPASS;// 定义一个创建信息返回值，默认为pdPASS 
 	
 	taskENTER_CRITICAL();//进入临界区
 	
-	/* 创建ScreenShotSem信号量 */
-	ScreenShotSem_Handle = xSemaphoreCreateBinary();
-	if(NULL != ScreenShotSem_Handle)
-		printf("ScreenShotSem二值信号量创建成功！\r\n");
-  
-	xReturn = xTaskCreate((TaskFunction_t)LED_Task,/* 任务入口函数 */
-											 (const char*    )"LED_Task",/* 任务名称 */
-											 (uint16_t       )128,       /* 任务栈大小 */
-											 (void*          )NULL,      /* 任务入口函数参数 */
-											 (UBaseType_t    )4,         /* 任务的优先级 */
-											 (TaskHandle_t   )&LED_Task_Handle);/* 任务控制块指针 */
-	if(pdPASS == xReturn)
-		printf("创建LED1_Task任务成功！\r\n");
-//  
-//  xReturn = xTaskCreate((TaskFunction_t)Touch_Task,/* 任务入口函数 */
-//											 (const char*      )"Touch_Task",/* 任务名称 */
-//											 (uint16_t         )256,     /* 任务栈大小 */
-//											 (void*            )NULL,    /* 任务入口函数参数 */
-//											 (UBaseType_t      )3,       /* 任务的优先级 */
-//											 (TaskHandle_t     )&Touch_Task_Handle);/* 任务控制块指针 */
-//	if(pdPASS == xReturn)
-//		printf("创建Touch_Task任务成功！\r\n");
+	// 创建ScreenShotSem信号量
+	CanReadySem_Handle = xSemaphoreCreateBinary();
 	
-	xReturn = xTaskCreate((TaskFunction_t)GUI_Task,/* 任务入口函数 */
-											 (const char*      )"GUI_Task",/* 任务名称 */
-											 (uint16_t         )1024,      /* 任务栈大小 */
-											 (void*            )NULL,      /* 任务入口函数参数 */
-											 (UBaseType_t      )2,         /* 任务的优先级 */
-											 (TaskHandle_t     )&GUI_Task_Handle);/* 任务控制块指针 */
+	if (CanReadySem_Handle != NULL)
+    {
+        printf("CanReadySem信号量创建成功！\r\n");
+    }
+	
+	// 第一个 CAN 任务
+	xReturn = xTaskCreate((TaskFunction_t)CAN_Task,						 		// 任务入口函数 
+											 (const char*    )"CAN_Task",		// 任务名称 
+											 (uint16_t       )128,       		// 任务栈大小 
+											 (void*          )NULL,      		// 任务入口函数参数 
+											 (UBaseType_t    )5,         		// 任务的优先级 
+											 (TaskHandle_t   )&CAN_Task_Handle);// 任务控制块指针 
+	if(pdPASS == xReturn)
+		printf("创建CAN_Task任务成功！\r\n");
+	
+	// 第二个 XCP_Driver 任务
+    xReturn = xTaskCreate((TaskFunction_t)XCP_Driver_Task,						// 任务入口函数 
+											 (const char*      )"XCP_Driver_Task",// 任务名称
+											 (uint16_t         )256,     		// 任务栈大小
+											 (void*            )NULL,    		// 任务入口函数参数
+											 (UBaseType_t      )4,       		// 任务的优先级
+											 (TaskHandle_t     )&XCP_Driver_Task_Handle);// 任务控制块指针
+	if(pdPASS == xReturn)
+		printf("创建XCP_Driver_Task任务成功！\r\n");
+	
+	// 第三个 GUI_Task任务
+	xReturn = xTaskCreate((TaskFunction_t)GUI_Task,						 		// 任务入口函数 
+											 (const char*    )"GUI_Task",		// 任务名称 
+											 (uint16_t       )1024,       		// 任务栈大小 
+											 (void*          )NULL,      		// 任务入口函数参数 
+											 (UBaseType_t    )2,         		// 任务的优先级 
+											 (TaskHandle_t   )&GUI_Task_Handle);// 任务控制块指针 
+											 
 	if(pdPASS == xReturn)
 		printf("创建GUI_Task任务成功！\r\n");
 	
-	vTaskDelete(AppTaskCreate_Handle);//删除AppTaskCreate任务
+	// 第四个 SD_Card_Task任务
+	xReturn = xTaskCreate((TaskFunction_t)SD_Card_Task,						 	// 任务入口函数 
+											 (const char*    )"SD_Card_Task",	// 任务名称 
+											 (uint16_t       )256,       		// 任务栈大小 
+											 (void*          )NULL,      		// 任务入口函数参数 
+											 (UBaseType_t    )3,         		// 任务的优先级 
+											 (TaskHandle_t   )&SD_Card_Task_Handle);// 任务控制块指针 
+											 
+	if(pdPASS == xReturn)
+		printf("创建SD_Card_Task任务成功！\r\n");
 	
-	taskEXIT_CRITICAL();//退出临界区
+	vTaskDelete(AppTaskCreate_Handle);// 删除AppTaskCreate任务
+	
+	taskEXIT_CRITICAL();// 退出临界区
 }
 
 /**
-  * @brief LED任务主体
+  * @brief CAN任务主体
   * @note 无
   * @param 无
   * @retval 无
   */
-static void LED_Task(void* parameter)
+static void CAN_Task(void* parameter)
 {
+	// CAN 任务完成初始化，通知 XCP 任务，添加信号量
+    xSemaphoreGive(CanReadySem_Handle);
+	
 	while(1)
 	{
-		LED3_TOGGLE;
-		vTaskDelay(1000);
+		SendCANEvent();
+		vTaskDelay(100);
 	}
 }
 
 /**
-  * @brief 触摸检测任务主体
+  * @brief XCP_Driver任务主体
   * @note 无
   * @param 无
   * @retval 无
   */
-static void Touch_Task(void* parameter)
+static void XCP_Driver_Task(void* parameter)
 {
-  /* 等待信号量 */
-	xSemaphoreTake(ScreenShotSem_Handle,/* 二值信号量句柄 */
-								 portMAX_DELAY);/* 阻塞等待 */  
+    // 等待 CAN 任务准备好
+    xSemaphoreTake(CanReadySem_Handle, portMAX_DELAY);  // 阻塞直到 CAN 任务通知
+	
 	while(1)
 	{
-		GTP_TouchProcess();//触摸屏定时扫描
-		vTaskDelay(200);
+		DAQ_Timestamp++; // 时间戳增加(10ms 单位)
+		XcpEvent(0);     // 通知 XCP 事件，10ms事件
+		vTaskDelay(10);
 	}
 }
 
@@ -212,19 +218,50 @@ static void Touch_Task(void* parameter)
 static void GUI_Task(void* parameter)
 {
   
-	/* 初始化STemWin */
-  GUI_Init();
-  /* 触摸屏初始化 */
-  //GTP_Init_Panel();
-  /* 给出信号量 */
-  xSemaphoreGive(ScreenShotSem_Handle);
-  /* 开LCD背光灯 */
+  // 初始化LCD屏幕 
+  GUI_Init(); 
+	
+  // 开LCD背光灯
   ILI9341_BackLed_Control ( ENABLE );
-	printf("GUI任务实现成功\n\r");
-	while(1)
-	{
-		MainTask();
-	}
+	
+  while(1)
+  {
+	  MainTask();
+  }
+}
+
+/**
+  * @brief SD_Card任务主体
+  * @note 无
+  * @param 无
+  * @retval 无
+  */
+static void SD_Card_Task(void* parameter)
+{
+  // 等待 CAN 任务准备好
+  xSemaphoreTake(CanReadySem_Handle, portMAX_DELAY);  // 阻塞直到 CAN 任务通知	
+	
+  while(1)
+  {
+	  SD_MainFunction();
+	  vTaskDelay(100);
+  }
+}
+
+static void App_Init(void)
+{
+	#define VECT_TAB_OFFSET  0x0000
+	
+    // 更新向量表地址为 app 的起始地址
+    SCB->VTOR = APP_BASE_ADDRESS | VECT_TAB_OFFSET;
+
+    // 清除 FAULTMASK，开启全局中断
+    __set_FAULTMASK(0);
+    __enable_irq();
+	
+	// 指示进入 App
+	printf("\r\n----------------------进入到App程序----------------------\r\n");
+	
 }
 
 /**
@@ -235,14 +272,33 @@ static void GUI_Task(void* parameter)
   */
 static void BSP_Init(void)
 {
-  /* SRAM初始化 */
-  FSMC_SRAM_Init();
+	// 初始化LED
+	LED_GPIO_Config();
+	
+    // 初始化USART1
+    Debug_USART_Config();
+		
+	// 初始化按键
+	Key_GPIO_Config();
+		
+	// 初始化CAN,在中断接收CAN数据包
+	CAN_Config();
+	
+	// 初始化XCP协议栈
+	XcpInit();
+
+    // 启用 CRC 校验，用于 emWin 库保护 
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);  
+  	
+	// SD卡格式化测试，检测SD卡可用性
+	SD_Check();
+	
+	// SRAM初始化
+    FSMC_SRAM_Init();
   
-  /* CRC和emWin没有关系，只是他们为了库的保护而做的
-   * 这样STemWin的库只能用在ST的芯片上面，别的芯片是无法使用的。
-   */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
-  
+    // ADC初始化
+	Rheostat_Init();
+
 	/*
 	 * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15
 	 * 优先级分组只需要分组一次即可，以后如果有其他的任务需要用到中断，
@@ -250,17 +306,6 @@ static void BSP_Init(void)
 	 */
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 	
-	/* LED 初始化 */
-	LED_GPIO_Config();
-
-  /* 蜂鸣器初始化 */
-  BEEP_GPIO_Config();
-  
-	/* 串口初始化	*/
-	Debug_USART_Config();
-  /* ADC初始化 */
-	Rheostat_Init();
-  
 }
 
 

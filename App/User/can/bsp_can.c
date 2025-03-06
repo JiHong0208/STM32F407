@@ -281,7 +281,7 @@ void SendCANEvent(void)
 	CAN_Transmit(CANx, &TxMessage);
 	
 	//是否将CAN报文信息打印到串口中
-	#if 0
+	#if 1
 	CAN_DEBUG_ARRAY(TxMessage.Data,8); 
 	#endif
 	

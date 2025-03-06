@@ -135,7 +135,6 @@ void MainTask(void)
 	{
 		/* 向GRAPH数据对象添加数据 */
 		GRAPH_DATA_YT_AddValue(Graphdata, ADC_ConvertedValue/6);
-			printf("GUI任务实现成功\n\r");
 		GUI_Delay(30);
 	}
 }

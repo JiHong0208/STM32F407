@@ -47,4 +47,9 @@
 ..\..\output\stm32f4xx_it.o: ..\..\FreeRTOS\include\mpu_wrappers.h
 ..\..\output\stm32f4xx_it.o: ..\..\FreeRTOS\include\task.h
 ..\..\output\stm32f4xx_it.o: ..\..\FreeRTOS\include\list.h
-..\..\output\stm32f4xx_it.o: ..\..\User\./adc/bsp_adc.h
+..\..\output\stm32f4xx_it.o: ..\..\User\adc\bsp_adc.h
+..\..\output\stm32f4xx_it.o: ..\..\User\can\bsp_can.h
+..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcpBasic.h
+..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcp_cfg.h
+..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcp_par.h
+..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcpBasic.h

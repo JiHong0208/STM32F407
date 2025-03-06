@@ -7,7 +7,7 @@ RightDockZones=000008000001000000002F0200000000000001130100000000000001000000003
 MDITabIndex=1
 MaximizedMDIChildren=1
 WindowCount=9
-ClosedWindowsCount=5
+ClosedWindowsCount=6
 
 [ConnectionsWindow]
 Columns=ebncBsoqOl,-24,-40,215,215,110,90,80,80,80,130
@@ -22,8 +22,8 @@ Top=70
 Width=1091
 Height=365
 Style=3
-SelCol=17
-SelLine=2
+SelCol=8
+SelLine=22
 FirstVisibleLine=0
 
 [1]
@@ -116,8 +116,8 @@ RowHeaderWidth=652
 Name=Window1_0EFDD5ED3FFB4FECAA56927B865C3B3A
 ObjectKind={0EFDD5ED-3FFB-4FEC-AA56-927B865C3B3A}
 Visible=0
-Left=-2207
-Top=-3136
+Left=-2531
+Top=-3584
 Width=183
 Height=539
 FloatLeft=110
@@ -148,14 +148,28 @@ SelLine=10
 FirstVisibleLine=0
 
 [Closed1]
-Ident=Trace1
-Left=52
-Top=52
+Ident=..\..\..\F407VGT6.dbc
+Left=104
+Top=104
+Width=1091
+Height=365
+
+[Closed2]
+Ident=Trace3
+Left=156
+Top=156
 Width=1091
 Height=365
 HexViewSize=60
 
-[Closed2]
+[Closed3]
+Ident=Line Writer1
+Left=78
+Top=78
+Width=1091
+Height=365
+
+[Closed4]
 Ident=Trace2
 Left=78
 Top=78
@@ -163,17 +177,10 @@ Width=1091
 Height=365
 HexViewSize=60
 
-[Closed3]
-Ident=..\..\..\F407VGT6.dbc
-Left=104
-Top=104
-Width=1091
-Height=365
-
-[Closed4]
-Ident=Trace3
-Left=156
-Top=156
+[Closed5]
+Ident=Trace1
+Left=52
+Top=52
 Width=1091
 Height=365
 HexViewSize=60
