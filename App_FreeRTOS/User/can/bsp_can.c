@@ -284,9 +284,6 @@ void SendCANEvent(void)
 	#if 0
 	CAN_DEBUG_ARRAY(TxMessage.Data,8); 
 	#endif
-	
-	// 处理 CAN 数据，解析电压值
-    Process_CAN_Voltage(TxMessage.Data);
     
 }
 /**************************END OF FILE************************************/

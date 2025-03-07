@@ -15,7 +15,7 @@ uint16_t LCD_Y_LENGTH = ILI9341_MORE_PIXEL;
 uint8_t LCD_SCAN_MODE =6;
 
 
-static uint16_t CurrentBackColor   = BLACK;//背景色
+static uint16_t CurrentBackColor   = WHITE;//背景色
 
 
 __inline void                 ILI9341_Write_Cmd           ( uint16_t usCmd );
@@ -457,7 +457,7 @@ void ILI9341_Init ( void )
 	ILI9341_GramScan(LCD_SCAN_MODE);
     
 	ILI9341_Clear(0,0,LCD_X_LENGTH,LCD_Y_LENGTH);	/* 清屏，显示全黑 */
-	ILI9341_BackLed_Control ( DISABLE );//关LCD背光灯
+	ILI9341_BackLed_Control ( DISABLE );// 关LCD背光灯
 }
 
 /**
@@ -471,9 +471,9 @@ void ILI9341_Init ( void )
 void ILI9341_BackLed_Control ( FunctionalState enumState )
 {
 	if ( enumState )
-		 GPIO_SetBits( ILI9341_BK_PORT, ILI9341_BK_PIN );	
+		 GPIO_ResetBits( ILI9341_BK_PORT, ILI9341_BK_PIN );	
 	else
-		 GPIO_ResetBits( ILI9341_BK_PORT, ILI9341_BK_PIN );
+		 GPIO_SetBits( ILI9341_BK_PORT, ILI9341_BK_PIN );
 		
 }
 

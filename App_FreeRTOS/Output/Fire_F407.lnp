@@ -52,6 +52,7 @@
 "..\..\output\sd.o"
 "..\..\output\sdio_test.o"
 "..\..\output\graphdlg.o"
+"..\..\output\start.o"
 "..\..\output\guiconf.o"
 "..\..\output\lcdconf_flexcolor.o"
 "..\..\output\gui_x_freertos.o"

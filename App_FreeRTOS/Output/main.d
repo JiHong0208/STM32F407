@@ -102,6 +102,7 @@
 ..\..\output\main.o: ..\..\STemWin\inc\TEXT.h
 ..\..\output\main.o: ..\..\STemWin\inc\TREEVIEW.h
 ..\..\output\main.o: ..\..\STemWin\inc\KNOB.h
+..\..\output\main.o: ..\..\STemWin_Task\START.h
 ..\..\output\main.o: ..\..\XCPDriver\xcpBasic.h
 ..\..\output\main.o: ..\..\XCPDriver\xcp_cfg.h
 ..\..\output\main.o: ..\..\XCPDriver\xcp_par.h

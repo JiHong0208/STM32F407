@@ -47,7 +47,7 @@
 ..\..\output\graphdlg.o: ..\..\STemWin\inc\TREEVIEW.h
 ..\..\output\graphdlg.o: ..\..\STemWin\inc\KNOB.h
 ..\..\output\graphdlg.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-..\..\output\graphdlg.o: ..\..\User\./adc/bsp_adc.h
+..\..\output\graphdlg.o: ..\..\User\usart\bsp_debug_usart.h
 ..\..\output\graphdlg.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\graphdlg.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\graphdlg.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -83,5 +83,5 @@
 ..\..\output\graphdlg.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h
 ..\..\output\graphdlg.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h
 ..\..\output\graphdlg.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h
-..\..\output\graphdlg.o: ..\..\User\./usart/bsp_debug_usart.h
 ..\..\output\graphdlg.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\..\output\graphdlg.o: ..\..\User\can\bsp_can.h

@@ -841,6 +841,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\STemWin_Task\GraphDLG.c</FilePath>
             </File>
+            <File>
+              <FileName>START.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\STemWin_Task\START.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
