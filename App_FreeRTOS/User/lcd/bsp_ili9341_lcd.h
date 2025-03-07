@@ -30,7 +30,7 @@ RAM基地址 = 0X6D00 0000 = 0X6C00 0000+2^0*2 = 0X6800 0000 + 0X2 = 0X6800 0002
 #define      FSMC_Bank1_NORSRAMx           FSMC_Bank1_NORSRAM3
 
 #define 			ILI9341_LESS_PIXEL	  	240			//液晶屏较短方向的像素宽度
-#define 			ILI9341_MORE_PIXEL	 		320			//液晶屏较长方向的像素宽度
+#define 			ILI9341_MORE_PIXEL	 	320			//液晶屏较长方向的像素宽度
 
 
 /******************************* ILI9341 显示屏8080通讯引脚定义 ***************************/
@@ -173,7 +173,7 @@ extern uint8_t LCD_SCAN_MODE;
 /******************************* 定义 ILI934 显示屏常用颜色 ********************************/
 #define      BACKGROUND		                BLACK   //默认背景颜色
 
-#define      WHITE		 		                  0xFFFF	   //白色
+#define      WHITE		 		           0xFFFF	   //白色
 #define      BLACK                         0x0000	   //黑色 
 #define      GREY                          0xF7DE	   //灰色 
 #define      BLUE                          0x001F	   //蓝色 
@@ -200,6 +200,7 @@ extern uint8_t LCD_SCAN_MODE;
 /********************************** 声明 ILI934 函数 ***************************************/
 void                     ILI9341_Init                    ( void );
 void                     ILI9341_Rst                     ( void );
+void 					 ILI9341_InvertDisplay			 (uint8_t enable);
 void                     ILI9341_BackLed_Control         ( FunctionalState enumState );
 void                     ILI9341_GramScan                ( uint8_t ucOtion );
 void                     ILI9341_OpenWindow              ( uint16_t usX, uint16_t usY, uint16_t usWidth, uint16_t usHeight );

@@ -3,7 +3,6 @@
 #include "semphr.h"
 #include "task.h"
 
-
 // 开发板硬件bsp头文件
 #include "bsp_debug_usart.h"
 #include "bsp_ili9341_lcd.h"
@@ -12,6 +11,7 @@
 #include "bsp_key.h"
 #include "bsp_adc.h"
 #include "bsp_can.h"
+#include "bsp_rtc.h"
 #include "sd.h"
 
 // STemWIN头文件
@@ -61,14 +61,13 @@ volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
 __IO uint32_t CANRxflag = 0;	            // 用于标志是否接收到数据，在中断函数中赋值
 CanTxMsg TxMessage;			                // 发送缓冲区
 CanRxMsg RxMessage;				            // 接收缓冲区
-volatile uint8_t key1_pressed_flag = 0;     // KEY1 按下标志
-volatile uint8_t key2_pressed_flag = 0;     // KEY2 按下标志
+
 
 
 // 声明初始化函数
 static void App_Init(void);                     // 用于Bootloader跳转到App
 static void BSP_Init(void);						// 用于初始化板载相关资源
-static void CheckKeyFlag(void);					// 用于检查keyflag标志位
+
 	
 static void AppTaskCreate(void);				// 用于创建任务
 static void CAN_Task(void* parameter);			// CAN_Task任务实现 
@@ -228,22 +227,10 @@ static void GUI_Task(void* parameter)
 	// 开LCD背光灯
 	ILI9341_BackLed_Control ( ENABLE );
 	
-	// 等待 CAN 任务准备好
-	xSemaphoreTake(CanReadySem_Handle, portMAX_DELAY);  // 阻塞直到 CAN 任务通知
-	
 	while(1)
 	{
-		// 检查keyflag标志位
-		CheckKeyFlag();
-		
-		if(key1_pressed_flag == 0)
-		{
-			LCD_Start();
-		}
-		else
-		{
-			MainTask();
-		}
+		MainTask();
+		//LCD_Start();                 
 	}
 }
 
@@ -314,7 +301,13 @@ static void BSP_Init(void)
     FSMC_SRAM_Init();
   
     // ADC初始化
-	Rheostat_Init();
+	//Rheostat_Init();
+	
+	// RTC时钟初始化
+	RTC_CLK_Config();
+	
+	// RTC外设功能初始化
+	RTC_Initialize();
 
 	/*
 	 * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15
@@ -322,25 +315,6 @@ static void BSP_Init(void)
 	 * 都统一用这个优先级分组，千万不要再分组，切忌。
 	 */
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
-	
-}
-
-/**
-  * @brief 
-  * @note 用于检查key1，key2按下的次数
-  * @param 无
-  * @retval 无
-  */
-static void CheckKeyFlag(void)
-{
-	if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
-	{
-		key1_pressed_flag = !key1_pressed_flag;
-	}
-	if(	Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON)
-	{
-		key2_pressed_flag = !key2_pressed_flag;
-	}
 }
 
 /********************************END OF FILE****************************/

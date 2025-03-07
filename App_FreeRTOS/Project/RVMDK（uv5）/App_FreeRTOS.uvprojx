@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Fire_F407</TargetName>
+      <TargetName>App_FreeRTOS</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,OS_SUPPORT</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\STemWin\Config;..\..\STemWin\inc;..\..\STemWin_Task;..\..\XCPDriver;..\..\FATFS;..\..\User;..\..\User\adc;..\..\User\can;..\..\User\flash;..\..\User\font;..\..\User\key;..\..\User\lcd;..\..\User\led;..\..\User\sdio;..\..\User\sram;..\..\User\systick;..\..\User\usart</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\STemWin\Config;..\..\STemWin\inc;..\..\STemWin_Task;..\..\XCPDriver;..\..\FATFS;..\..\User;..\..\User\adc;..\..\User\can;..\..\User\flash;..\..\User\font;..\..\User\key;..\..\User\lcd;..\..\User\led;..\..\User\sdio;..\..\User\sram;..\..\User\systick;..\..\User\usart;..\..\User\rtc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -830,6 +830,11 @@
               <FileName>sdio_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\sdio\sdio_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\rtc\bsp_rtc.c</FilePath>
             </File>
           </Files>
         </Group>

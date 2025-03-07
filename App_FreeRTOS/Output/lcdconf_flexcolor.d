@@ -8,7 +8,7 @@
 ..\..\output\lcdconf_flexcolor.o: ..\..\STemWin\inc\Global.h
 ..\..\output\lcdconf_flexcolor.o: ..\..\STemWin\inc\GUI_Version.h
 ..\..\output\lcdconf_flexcolor.o: ..\..\STemWin\inc\GUIDRV_FlexColor.h
-..\..\output\lcdconf_flexcolor.o: ..\..\User\./lcd/bsp_ili9341_lcd.h
+..\..\output\lcdconf_flexcolor.o: ..\..\User\lcd\bsp_ili9341_lcd.h
 ..\..\output\lcdconf_flexcolor.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\lcdconf_flexcolor.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\lcdconf_flexcolor.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

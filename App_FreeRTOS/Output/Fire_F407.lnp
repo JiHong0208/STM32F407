@@ -51,6 +51,7 @@
 "..\..\output\bsp_sdio_sd.o"
 "..\..\output\sd.o"
 "..\..\output\sdio_test.o"
+"..\..\output\bsp_rtc.o"
 "..\..\output\graphdlg.o"
 "..\..\output\start.o"
 "..\..\output\guiconf.o"

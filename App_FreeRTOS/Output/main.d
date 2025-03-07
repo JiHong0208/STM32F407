@@ -56,6 +56,7 @@
 ..\..\output\main.o: ..\..\User\key\bsp_key.h
 ..\..\output\main.o: ..\..\User\adc\bsp_adc.h
 ..\..\output\main.o: ..\..\User\can\bsp_can.h
+..\..\output\main.o: ..\..\User\rtc\bsp_rtc.h
 ..\..\output\main.o: ..\..\User\sdio\sd.h
 ..\..\output\main.o: ..\..\STemWin\inc\GUI.h
 ..\..\output\main.o: ..\..\STemWin\inc\GUI_ConfDefaults.h

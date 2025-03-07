@@ -1,5 +1,5 @@
-#include "./font/fonts.h"	
-#include "./lcd/bsp_ili9341_lcd.h"
+#include "fonts.h"	
+#include "bsp_ili9341_lcd.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -15,7 +15,7 @@ uint16_t LCD_Y_LENGTH = ILI9341_MORE_PIXEL;
 uint8_t LCD_SCAN_MODE =6;
 
 
-static uint16_t CurrentBackColor   = WHITE;//背景色
+static uint16_t CurrentBackColor   = BLACK;//背景色
 
 
 __inline void                 ILI9341_Write_Cmd           ( uint16_t usCmd );
@@ -456,6 +456,7 @@ void ILI9341_Init ( void )
 	//设置默认扫描方向，其中 6 模式为大部分液晶例程的默认显示方向  
 	ILI9341_GramScan(LCD_SCAN_MODE);
     
+    ILI9341_InvertDisplay(1);
 	ILI9341_Clear(0,0,LCD_X_LENGTH,LCD_Y_LENGTH);	/* 清屏，显示全黑 */
 	ILI9341_BackLed_Control ( DISABLE );// 关LCD背光灯
 }
@@ -494,6 +495,22 @@ void ILI9341_Rst ( void )
 	
 }
 
+/**
+ * @brief  使能ILI9341反色模式
+ * @param  enable : 若为1，则启用反色模式；若为0，则关闭反色模式
+ * @retval 无
+ */
+void ILI9341_InvertDisplay(uint8_t enable)
+{
+    if (enable)
+    {
+        ILI9341_Write_Cmd(0x21); // 启用反色模式
+    }
+    else
+    {
+        ILI9341_Write_Cmd(0x20); // 关闭反色模式
+    }
+}
 
 
 

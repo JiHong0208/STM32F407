@@ -150,7 +150,7 @@ void GUI_X_Lock(void)
   }
 	/* 获取互斥量 */
   xSemaphoreTake(xQueueMutex,   /* 互斥量句柄 */
-								 portMAX_DELAY);/* 阻塞等待 */
+				 portMAX_DELAY);/* 阻塞等待 */
 }
 
 /* Get Task handle */
@@ -164,7 +164,7 @@ void GUI_X_WaitEvent (void)
 {
   /* 获取信号量 */
   while(xSemaphoreTake(xSemaTxDone,              /* 信号量句柄 */
-								       portMAX_DELAY) != pdTRUE);/* 阻塞等待 */
+					   portMAX_DELAY) != pdTRUE);/* 阻塞等待 */
 }
 
 

@@ -48,7 +48,7 @@ Purpose     : Display controller configuration (single layer)
 
 #include "GUI.h"
 #include "GUIDRV_FlexColor.h"
-#include "./lcd/bsp_ili9341_lcd.h"
+#include "bsp_ili9341_lcd.h"
 /*********************************************************************
 *
 *       Layer configuration (to be modified)
@@ -103,7 +103,7 @@ Purpose     : Display controller configuration (single layer)
 */
 static void LcdWriteReg(U16 Data) {
   // ... TBD by user
-  * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_CMD ) = Data;								//modify by fire
+  * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_CMD ) = Data;
 }
 
 /********************************************************************
@@ -115,7 +115,7 @@ static void LcdWriteReg(U16 Data) {
 */
 static void LcdWriteData(U16 Data) {
   // ... TBD by user
-  * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA ) = Data;//modify by fire
+  * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA ) = Data;
 }
 
 /********************************************************************
@@ -128,7 +128,7 @@ static void LcdWriteData(U16 Data) {
 static void LcdWriteDataMultiple(U16 * pData, int NumItems) {
   while (NumItems--) {
     // ... TBD by user
-    * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA ) = *pData++;//modify by fire
+    * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA ) = *pData++;
   }
 }
 
@@ -144,7 +144,7 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems) {
 	//*pData = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9806G_DATA );	
   while (NumItems--) {
     // ... TBD by user
-		*pData++ = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA );//modify by fire
+		*pData++ = * ( __IO uint16_t * ) ( FSMC_Addr_ILI9341_DATA );
   }
 }
 
@@ -171,6 +171,7 @@ void LCD_X_Config(void) {
   // Set display driver and color conversion
   //
   pDevice = GUI_DEVICE_CreateAndLink(GUIDRV_FLEXCOLOR, GUICC_M565, 0, 0);
+
   //
   // Display driver configuration, required for Lin-driver
   //
@@ -179,15 +180,15 @@ void LCD_X_Config(void) {
   //
   // Orientation
   //
-  Config.FirstCOM = 0;                                          //modify by fire
-  Config.FirstSEG = 0;                                          //modify by fire  
-	Config.Orientation = GUI_MIRROR_Y|GUI_MIRROR_X;								//modify by fire 竖屏
-//调整扫描方向，主要是为了使触摸输出的坐标对应
-	LCD_SCAN_MODE = 6;	
-//  Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;					    //modify by fire  横屏
+  Config.FirstCOM = 0;                                          
+  Config.FirstSEG = 0; 
+  Config.Orientation = 0;  // 不做旋转或镜像
+  LCD_SCAN_MODE = 0;       // 扫描模式设置为0（不做旋转）
+  
+//  Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;					    
 ////调整扫描方向，主要是为了使触摸输出的坐标对应	
 //	LCD_SCAN_MODE = 5;	
-  Config.NumDummyReads = 2;                                     //modify by fire 读取的第二个数据才是真实数据
+  Config.NumDummyReads = 2;                                   
 
   GUIDRV_FlexColor_Config(pDevice, &Config);
   //
@@ -197,7 +198,7 @@ void LCD_X_Config(void) {
   PortAPI.pfWrite16_A1  = LcdWriteData;
   PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
   PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
-  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);//modify by fire
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);
 }
 
 /*********************************************************************
@@ -235,7 +236,7 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
     // to be adapted by the customer...
     //
     // ...
-    ILI9341_Init();//modify by fire
+    ILI9341_Init();
     
     return 0;
   }
