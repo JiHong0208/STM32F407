@@ -4,10 +4,10 @@ RightDockPanelSize=275
 TopDockPanelSize=156
 BottomDockPanelSize=102
 RightDockZones=000008000001000000002F020000000000000113010000000000000100000000380100002800000057696E646F77315F343846374237464233434536344130363933313034343438373143334234373701000000002F0200002800000057696E646F77315F3741384133324334423731383430443639423842363838463644454633303638FFFFFFFF
-MDITabIndex=1
+MDITabIndex=0
 MaximizedMDIChildren=1
-WindowCount=9
-ClosedWindowsCount=5
+WindowCount=8
+ClosedWindowsCount=7
 
 [ConnectionsWindow]
 Columns=ebncBsoqOl,-24,-40,215,215,110,90,80,80,80,130
@@ -22,25 +22,11 @@ Top=70
 Width=1091
 Height=365
 Style=3
-SelCol=17
-SelLine=2
-FirstVisibleLine=0
+SelCol=13
+SelLine=6
+FirstVisibleLine=26
 
 [1]
-Name=Window1_RcvXmtForm
-ObjectKind={3F159EA3-60F6-46C7-9062-93F1E6750139}
-Visible=1
-Left=26
-Top=26
-Width=1091
-Height=365
-Style=3
-RcvSize=500
-SplitState=1
-HexViewSize=60
-HexViewVisible=0
-
-[2]
 Name=Window1_OutputWindow
 ObjectKind={4842AE28-C870-4465-8195-8E0BC9B5DC5A}
 Visible=0
@@ -52,7 +38,7 @@ Style=2
 TabIndex=0
 SplitPos=153
 
-[3]
+[2]
 Name=Window1_WatchWindow
 ObjectKind={EA49F784-6A32-4cfe-A009-A286A8DED2FD}
 Visible=0
@@ -63,7 +49,7 @@ FloatHeight=200
 Style=2
 TabIndex=0
 
-[4]
+[3]
 Name=Window1_ConnectionsWindow
 ObjectKind={FB44BF1E-7C70-4F04-A5B5-A476C4006598}
 Visible=1
@@ -78,7 +64,7 @@ FloatHeight=155
 Style=2
 DockedTo=BottomDockPanel
 
-[5]
+[4]
 Name=Window1_48F7B7FB3CE64A069310444871C3B477
 ObjectKind={48F7B7FB-3CE6-4A06-9310-444871C3B477}
 Visible=1
@@ -96,7 +82,7 @@ TabIndex=0
 ExpandedFolders=
 ExpandedItems=Connections,Macros
 
-[6]
+[5]
 Name=Window1_7A8A32C4B71840D69B8B688F6DEF3068
 ObjectKind={7A8A32C4-B718-40D6-9B8B-688F6DEF3068}
 Visible=1
@@ -112,12 +98,12 @@ Style=2
 DockedTo=RightDockPanel
 RowHeaderWidth=652
 
-[7]
+[6]
 Name=Window1_0EFDD5ED3FFB4FECAA56927B865C3B3A
 ObjectKind={0EFDD5ED-3FFB-4FEC-AA56-927B865C3B3A}
 Visible=0
-Left=-2369
-Top=-3360
+Left=-3179
+Top=-4480
 Width=183
 Height=539
 FloatLeft=110
@@ -127,7 +113,7 @@ FloatHeight=450
 Style=2
 DockedTo=LeftDockPanel
 
-[8]
+[7]
 Name=Window1_MacroStatusWindow
 ObjectKind={9D2F99BB-7967-4361-8FA6-7ACD02D41EE3}
 Visible=0
@@ -148,6 +134,28 @@ SelLine=10
 FirstVisibleLine=0
 
 [Closed1]
+Ident=..\..\..\F407VGT6.dbc
+Left=104
+Top=104
+Width=1091
+Height=365
+
+[Closed2]
+Ident=Trace3
+Left=156
+Top=156
+Width=1091
+Height=365
+HexViewSize=60
+
+[Closed3]
+Ident=Line Writer1
+Left=78
+Top=78
+Width=1091
+Height=365
+
+[Closed4]
 Ident=Trace1
 Left=52
 Top=52
@@ -155,25 +163,21 @@ Width=1091
 Height=365
 HexViewSize=60
 
-[Closed2]
+[Closed5]
+Ident=RcvXmt
+Left=26
+Top=26
+Width=1091
+Height=365
+RcvSize=500
+SplitState=1
+HexViewSize=60
+HexViewVisible=0
+
+[Closed6]
 Ident=Trace2
 Left=78
 Top=78
-Width=1091
-Height=365
-HexViewSize=60
-
-[Closed3]
-Ident=..\..\..\F407VGT6.dbc
-Left=104
-Top=104
-Width=1091
-Height=365
-
-[Closed4]
-Ident=Trace3
-Left=156
-Top=156
 Width=1091
 Height=365
 HexViewSize=60

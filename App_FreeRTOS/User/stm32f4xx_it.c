@@ -1,59 +1,11 @@
-/**
-  ******************************************************************************
-  * @file    FMC_SDRAM/stm32f4xx_it.c 
-  * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    11-November-2013
-  * @brief   Main Interrupt Service Routines.
-  *         This file provides template for all exceptions handler and
-  *         peripherals interrupt service routine.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
 
-/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 
 #include "FreeRTOS.h"					//FreeRTOS使用		  
 #include "task.h" 
-#include "bsp_adc.h"
 #include "bsp_can.h"
 #include "xcpBasic.h"
-
-/** @addtogroup STM32F407I_DISCOVERY_Examples
-  * @{
-  */
-
-/** @addtogroup FMC_SDRAM
-  * @{
-  */ 
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-
-/******************************************************************************/
-/*            Cortex-M4 Processor Exceptions Handlers                         */
-/******************************************************************************/
+#include "bsp_exti.h"
 
 /**
   * @brief  This function handles NMI exception.
@@ -146,32 +98,11 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f429_439xx.s).                         */
 /******************************************************************************/
-extern __IO uint16_t ADC_ConvertedValue;
+
 extern __IO uint32_t CANRxflag;               // 标志是否接收到数据
 extern CanRxMsg RxMessage;                    // CAN 接收缓冲区
 extern volatile uint8_t StartStopVoltageFlag; // 标志位，判断是否将电压数据存储进SD卡
 
-/**
-  * @brief  ADC 转换完成中断服务程序
-  * @param  None
-  * @retval None
-  */
-void ADC_IRQHandler(void)
-{
-	uint32_t ulReturn;
-	/* 进入临界段 */
-	ulReturn = taskENTER_CRITICAL_FROM_ISR();
-	
-	if(ADC_GetITStatus(RHEOSTAT_ADC,ADC_IT_EOC)==SET)
-	{
-		/* 读取ADC的转换值 */
-		ADC_ConvertedValue = ADC_GetConversionValue(RHEOSTAT_ADC);
-	}
-	ADC_ClearITPendingBit(RHEOSTAT_ADC,ADC_IT_EOC);
-	
-	/* 退出临界段 */
-	taskEXIT_CRITICAL_FROM_ISR(ulReturn);
-}
 /**
   * @brief  This function handles CAN RX interrupt request.
   * @param  None
@@ -202,6 +133,27 @@ void CAN_RX_IRQHandler(void)
         CANRxflag = 0;  // 接收失败
     }
 }
+#if 0
+void KEY1_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(KEY1_INT_EXTI_LINE) != RESET) 
+	{
+    //清除中断标志位
+		EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE);     
+	}  
+}
+
+void KEY2_IRQHandler(void)
+{
+  //确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(KEY2_INT_EXTI_LINE) != RESET) 
+	{
+    //清除中断标志位
+		EXTI_ClearITPendingBit(KEY2_INT_EXTI_LINE);     
+	}  
+}
+#endif
 /**
   * @}
   */ 

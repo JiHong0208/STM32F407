@@ -54,7 +54,6 @@
 ..\..\output\main.o: ..\..\User\sram\bsp_sram.h
 ..\..\output\main.o: ..\..\User\led\bsp_led.h
 ..\..\output\main.o: ..\..\User\key\bsp_key.h
-..\..\output\main.o: ..\..\User\adc\bsp_adc.h
 ..\..\output\main.o: ..\..\User\can\bsp_can.h
 ..\..\output\main.o: ..\..\User\rtc\bsp_rtc.h
 ..\..\output\main.o: ..\..\User\sdio\sd.h
@@ -104,6 +103,7 @@
 ..\..\output\main.o: ..\..\STemWin\inc\TREEVIEW.h
 ..\..\output\main.o: ..\..\STemWin\inc\KNOB.h
 ..\..\output\main.o: ..\..\STemWin_Task\START.h
+..\..\output\main.o: ..\..\STemWin_Task\GraphDLG.h
 ..\..\output\main.o: ..\..\XCPDriver\xcpBasic.h
 ..\..\output\main.o: ..\..\XCPDriver\xcp_cfg.h
 ..\..\output\main.o: ..\..\XCPDriver\xcp_par.h

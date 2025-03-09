@@ -83,3 +83,4 @@
 ..\..\output\start.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h
 ..\..\output\start.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h
 ..\..\output\start.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\..\output\start.o: ..\..\User\key\bsp_key.h

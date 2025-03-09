@@ -9,7 +9,6 @@
 #include "bsp_sram.h"	  
 #include "bsp_led.h"
 #include "bsp_key.h"
-#include "bsp_adc.h"
 #include "bsp_can.h"
 #include "bsp_rtc.h"
 #include "sd.h"
@@ -18,6 +17,7 @@
 #include "GUI.h"
 #include "DIALOG.h"
 #include "START.h"
+#include "GraphDLG.h"
 
 // XCPDriver头文件
 #include "xcpBasic.h"
@@ -59,6 +59,7 @@ SemaphoreHandle_t CanReadySem_Handle   = NULL;// 信号量句柄
 // 定义全局变量
 volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
 __IO uint32_t CANRxflag = 0;	            // 用于标志是否接收到数据，在中断函数中赋值
+__IO uint8_t key1_pressed_flag = 0;         // Key1按压标志位
 CanTxMsg TxMessage;			                // 发送缓冲区
 CanRxMsg RxMessage;				            // 接收缓冲区
 
@@ -144,7 +145,7 @@ static void AppTaskCreate(void)
 											 (const char*      )"XCP_Driver_Task",// 任务名称
 											 (uint16_t         )256,     		// 任务栈大小
 											 (void*            )NULL,    		// 任务入口函数参数
-											 (UBaseType_t      )4,       		// 任务的优先级
+											 (UBaseType_t      )3,       		// 任务的优先级
 											 (TaskHandle_t     )&XCP_Driver_Task_Handle);// 任务控制块指针
 	if(pdPASS == xReturn)
 		printf("创建XCP_Driver_Task任务成功！\r\n");
@@ -163,9 +164,9 @@ static void AppTaskCreate(void)
 	// 第四个 SD_Card_Task任务
 	xReturn = xTaskCreate((TaskFunction_t)SD_Card_Task,						 	// 任务入口函数 
 											 (const char*    )"SD_Card_Task",	// 任务名称 
-											 (uint16_t       )256,       		// 任务栈大小 
+											 (uint16_t       )1024,       		// 任务栈大小 
 											 (void*          )NULL,      		// 任务入口函数参数 
-											 (UBaseType_t    )3,         		// 任务的优先级 
+											 (UBaseType_t    )4,         		// 任务的优先级 
 											 (TaskHandle_t   )&SD_Card_Task_Handle);// 任务控制块指针 
 											 
 	if(pdPASS == xReturn)
@@ -190,7 +191,7 @@ static void CAN_Task(void* parameter)
 	while(1)
 	{
 		SendCANEvent();
-		vTaskDelay(100);
+		vTaskDelay(1000);
 	}
 }
 
@@ -229,8 +230,15 @@ static void GUI_Task(void* parameter)
 	
 	while(1)
 	{
-		MainTask();
-		//LCD_Start();                 
+		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
+		{
+			LCD_Start();  
+		}
+		if(	Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON)
+		{
+			VoltageShow();  
+		}  		
+		
 	}
 }
 
@@ -242,13 +250,10 @@ static void GUI_Task(void* parameter)
   */
 static void SD_Card_Task(void* parameter)
 {
-	// 等待 CAN 任务准备好
-	xSemaphoreTake(CanReadySem_Handle, portMAX_DELAY);  // 阻塞直到 CAN 任务通知	
-	
 	while(1)
 	{
 		SD_MainFunction();
-		vTaskDelay(100);
+		vTaskDelay(1000);
 	}
 }
 
@@ -299,9 +304,6 @@ static void BSP_Init(void)
 	
 	// SRAM初始化
     FSMC_SRAM_Init();
-  
-    // ADC初始化
-	//Rheostat_Init();
 	
 	// RTC时钟初始化
 	RTC_CLK_Config();

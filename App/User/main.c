@@ -72,8 +72,6 @@ int main(void)
 			{
 				Voltage();
 			}
-
-
 		}
 		
 		// 检测KEY2按键，按下时切换StartStopVoltageFlag，用于暂停或开始电压信息发送和存储

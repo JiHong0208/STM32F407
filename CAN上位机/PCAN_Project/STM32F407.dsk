@@ -7,7 +7,7 @@ RightDockZones=000008000001000000002F0200000000000001130100000000000001000000003
 MDITabIndex=1
 MaximizedMDIChildren=1
 WindowCount=9
-ClosedWindowsCount=6
+ClosedWindowsCount=7
 
 [ConnectionsWindow]
 Columns=ebncBsoqOl,-24,-40,215,215,110,90,80,80,80,130
@@ -22,9 +22,9 @@ Top=70
 Width=1091
 Height=365
 Style=3
-SelCol=8
-SelLine=22
-FirstVisibleLine=0
+SelCol=13
+SelLine=6
+FirstVisibleLine=26
 
 [1]
 Name=Window1_RcvXmtForm
@@ -116,8 +116,8 @@ RowHeaderWidth=652
 Name=Window1_0EFDD5ED3FFB4FECAA56927B865C3B3A
 ObjectKind={0EFDD5ED-3FFB-4FEC-AA56-927B865C3B3A}
 Visible=0
-Left=-2531
-Top=-3584
+Left=-3341
+Top=-4704
 Width=183
 Height=539
 FloatLeft=110
@@ -170,17 +170,28 @@ Width=1091
 Height=365
 
 [Closed4]
-Ident=Trace2
-Left=78
-Top=78
+Ident=Trace1
+Left=52
+Top=52
 Width=1091
 Height=365
 HexViewSize=60
 
 [Closed5]
-Ident=Trace1
-Left=52
-Top=52
+Ident=RcvXmt
+Left=26
+Top=26
+Width=1091
+Height=365
+RcvSize=500
+SplitState=1
+HexViewSize=60
+HexViewVisible=0
+
+[Closed6]
+Ident=Trace2
+Left=78
+Top=78
 Width=1091
 Height=365
 HexViewSize=60

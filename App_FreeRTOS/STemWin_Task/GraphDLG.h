@@ -5,6 +5,6 @@
 #include "DIALOG.h"
 #include "GRAPH.h"
 
-void MainTask(void);
+void VoltageShow(void);
 
 #endif /* __GRAPHDLG_H */

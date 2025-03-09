@@ -138,7 +138,7 @@ void RTC_TimeAndDate_Set(void)
 }
 
 // 获取时间和日期，并存入字符串数组
-void RTC_TimeAndDate_Get(char* dateStr, char* timeStr)
+void RTC_TimeAndDate_Get(char* dateStr, char* timeStr, char* weekStr)
 {
 	RTC_DateTypeDef RTC_DateStructure;
     RTC_TimeTypeDef RTC_TimeStructure;
@@ -148,14 +148,17 @@ void RTC_TimeAndDate_Get(char* dateStr, char* timeStr)
     RTC_GetTime(RTC_Format_BIN, &RTC_TimeStructure);
 
     // 格式化日期字符串
-    sprintf(dateStr, "20%02d%02d%02d%02d",
+    sprintf(dateStr, "20%0.2d-%0.2d-%0.2d",
             RTC_DateStructure.RTC_Year,
             RTC_DateStructure.RTC_Month,
-            RTC_DateStructure.RTC_Date,
-            RTC_DateStructure.RTC_WeekDay);
+            RTC_DateStructure.RTC_Date);
 
+	// 格式化星期字符串
+    sprintf(weekStr, "%0.2d",
+            RTC_DateStructure.RTC_WeekDay);
+	
     // 格式化时间字符串
-    sprintf(timeStr, "%02d%02d%02d",
+    sprintf(timeStr, "%0.2d:%0.2d:%0.2d",
             RTC_TimeStructure.RTC_Hours,
             RTC_TimeStructure.RTC_Minutes,
             RTC_TimeStructure.RTC_Seconds);

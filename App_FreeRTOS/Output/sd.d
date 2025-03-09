@@ -41,4 +41,5 @@
 ..\..\output\sd.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h
 ..\..\output\sd.o: ..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h
 ..\..\output\sd.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\..\output\sd.o: ..\..\User\rtc\bsp_rtc.h
 ..\..\output\sd.o: ..\..\User\usart\bsp_debug_usart.h

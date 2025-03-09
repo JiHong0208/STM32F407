@@ -38,7 +38,7 @@
                                   
 void RTC_CLK_Config(void);
 void RTC_TimeAndDate_Set(void);
-void RTC_TimeAndDate_Get(char* dateStr, char* timeStr);
+void RTC_TimeAndDate_Get(char* dateStr, char* timeStr, char* weekStr);
 void RTC_Initialize(void);
 
 #endif // __RTC_H__

@@ -7,17 +7,17 @@
 
 
 
-#define CANx                       	CAN2
+#define CANx                       CAN2
 #define CAN_CLK                    RCC_APB1Periph_CAN1 |RCC_APB1Periph_CAN2
-#define CAN_RX_IRQ									CAN2_RX0_IRQn
-#define CAN_RX_IRQHandler					CAN2_RX0_IRQHandler
+#define CAN_RX_IRQ				   CAN2_RX0_IRQn
+#define CAN_RX_IRQHandler		   CAN2_RX0_IRQHandler
 
 #define CAN_RX_PIN                 GPIO_Pin_12
 #define CAN_TX_PIN                 GPIO_Pin_13
-#define CAN_TX_GPIO_PORT          GPIOB
-#define CAN_RX_GPIO_PORT          GPIOB
-#define CAN_TX_GPIO_CLK           RCC_AHB1Periph_GPIOB
-#define CAN_RX_GPIO_CLK           RCC_AHB1Periph_GPIOB
+#define CAN_TX_GPIO_PORT           GPIOB
+#define CAN_RX_GPIO_PORT           GPIOB
+#define CAN_TX_GPIO_CLK            RCC_AHB1Periph_GPIOB
+#define CAN_RX_GPIO_CLK            RCC_AHB1Periph_GPIOB
 #define CAN_AF_PORT                GPIO_AF_CAN2
 #define CAN_RX_SOURCE              GPIO_PinSource12
 #define CAN_TX_SOURCE              GPIO_PinSource13 

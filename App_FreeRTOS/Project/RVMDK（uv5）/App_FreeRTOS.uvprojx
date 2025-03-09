@@ -772,6 +772,16 @@
               <FilePath>..\..\User\stm32f4xx_it.c</FilePath>
             </File>
             <File>
+              <FileName>FreeRTOSConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\User\FreeRTOSConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\sdio\sd.c</FilePath>
+            </File>
+            <File>
               <FileName>bsp_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\led\bsp_led.c</FilePath>
@@ -782,9 +792,19 @@
               <FilePath>..\..\User\key\bsp_key.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_spi_flash.c</FileName>
+              <FileName>bsp_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\flash\bsp_spi_flash.c</FilePath>
+              <FilePath>..\..\User\can\bsp_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\rtc\bsp_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\key\bsp_exti.c</FilePath>
             </File>
             <File>
               <FileName>bsp_sram.c</FileName>
@@ -792,29 +812,9 @@
               <FilePath>..\..\User\sram\bsp_sram.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_debug_usart.c</FileName>
+              <FileName>bsp_spi_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\usart\bsp_debug_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>FreeRTOSConfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\FreeRTOSConfig.h</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\adc\bsp_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_ili9341_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\lcd\bsp_ili9341_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\can\bsp_can.c</FilePath>
+              <FilePath>..\..\User\flash\bsp_spi_flash.c</FilePath>
             </File>
             <File>
               <FileName>bsp_sdio_sd.c</FileName>
@@ -822,19 +822,14 @@
               <FilePath>..\..\User\sdio\bsp_sdio_sd.c</FilePath>
             </File>
             <File>
-              <FileName>sd.c</FileName>
+              <FileName>bsp_ili9341_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\sdio\sd.c</FilePath>
+              <FilePath>..\..\User\lcd\bsp_ili9341_lcd.c</FilePath>
             </File>
             <File>
-              <FileName>sdio_test.c</FileName>
+              <FileName>bsp_debug_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\sdio\sdio_test.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\rtc\bsp_rtc.c</FilePath>
+              <FilePath>..\..\User\usart\bsp_debug_usart.c</FilePath>
             </File>
           </Files>
         </Group>
