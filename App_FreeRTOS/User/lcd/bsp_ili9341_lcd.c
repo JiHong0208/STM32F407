@@ -669,7 +669,6 @@ void ILI9341_Clear ( uint16_t usX, uint16_t usY, uint16_t usWidth, uint16_t usHe
 	
 }
 
-/*********************end of file*************************/
 
 
 

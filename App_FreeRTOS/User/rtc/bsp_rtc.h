@@ -17,15 +17,15 @@
 
 // 时间宏定义
 #define RTC_H12_AMorPM		 RTC_H12_AM  
-#define HOURS                20          // 0~23
-#define MINUTES              17          // 0~59
-#define SECONDS              0          // 0~59
+#define HOURS                19          // 0~23
+#define MINUTES              42          // 0~59
+#define SECONDS              0           // 0~59
 
 // 日期宏定义
-#define WEEKDAY              5         // 1~7
-#define DATE                 7         // 1~31
-#define MONTH                3         // 1~12
-#define YEAR                 25         // 0~99
+#define WEEKDAY              1           // 1~7
+#define DATE                 10          // 1~31
+#define MONTH                3           // 1~12
+#define YEAR                 25          // 0~99
 
 // 时间格式宏定义
 #define RTC_Format_BINorBCD  RTC_Format_BIN

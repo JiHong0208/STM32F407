@@ -13,11 +13,14 @@
 #include "bsp_rtc.h"
 #include "sd.h"
 
+#if	UseKeyExtiIRQ
+#include "bsp_exti.h"
+#endif
+
 // STemWIN头文件
 #include "GUI.h"
 #include "DIALOG.h"
-#include "START.h"
-#include "GraphDLG.h"
+#include "VoltageShow.h"
 
 // XCPDriver头文件
 #include "xcpBasic.h"
@@ -56,11 +59,11 @@ SemaphoreHandle_t CanReadySem_Handle   = NULL;// 信号量句柄
 // 宏定义
 #define APP_BASE_ADDRESS  0x08020000	    // App 的起始地址宏
 #define CANPrintToUsart   0					// 是否将CAN报文输出至串口，0：不输出，1：输出
+#define UseKeyExtiIRQ	  0					// 是否使用Exit外部按键中断 0：不使用，1：使用
 
 // 定义全局变量
 volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
 __IO uint32_t CANRxflag = 0;	            // 用于标志是否接收到数据，在中断函数中赋值
-__IO uint8_t key1_pressed_flag = 0;         // Key1按压标志位
 CanTxMsg TxMessage;			                // 发送缓冲区
 CanRxMsg RxMessage;				            // 接收缓冲区
 
@@ -119,59 +122,46 @@ int main(void)
   */
 static void AppTaskCreate(void)
 {
-	BaseType_t xReturn = pdPASS;// 定义一个创建信息返回值，默认为pdPASS 
-	
 	taskENTER_CRITICAL();//进入临界区
 	
 	// 创建ScreenShotSem信号量
-	CanReadySem_Handle = xSemaphoreCreateBinary();
-	
-	if (CanReadySem_Handle != NULL)
-    {
-        printf("CanReadySem信号量创建成功！\r\n");
-    }
+	CanReadySem_Handle = xSemaphoreCreateBinary();	
 	
 	// 第一个 CAN 任务
-	xReturn = xTaskCreate((TaskFunction_t)CAN_Task,						 		// 任务入口函数 
-											 (const char*    )"CAN_Task",		// 任务名称 
-											 (uint16_t       )128,       		// 任务栈大小 
-											 (void*          )NULL,      		// 任务入口函数参数 
+	xTaskCreate((TaskFunction_t)CAN_Task,						 		        // 任务入口函数 
+											(const char*    )"CAN_Task",		// 任务名称 
+											(uint16_t       )128,       		// 任务栈大小 
+											(void*          )NULL,      		// 任务入口函数参数 
 											 (UBaseType_t    )5,         		// 任务的优先级 
 											 (TaskHandle_t   )&CAN_Task_Handle);// 任务控制块指针 
-	if(pdPASS == xReturn)
-		printf("创建CAN_Task任务成功！\r\n");
+
 	
 	// 第二个 XCP_Driver 任务
-    xReturn = xTaskCreate((TaskFunction_t)XCP_Driver_Task,						// 任务入口函数 
+    xTaskCreate((TaskFunction_t)XCP_Driver_Task,						        // 任务入口函数 
 											 (const char*      )"XCP_Driver_Task",// 任务名称
 											 (uint16_t         )256,     		// 任务栈大小
 											 (void*            )NULL,    		// 任务入口函数参数
 											 (UBaseType_t      )3,       		// 任务的优先级
 											 (TaskHandle_t     )&XCP_Driver_Task_Handle);// 任务控制块指针
-	if(pdPASS == xReturn)
-		printf("创建XCP_Driver_Task任务成功！\r\n");
+
 	
 	// 第三个 GUI_Task任务
-	xReturn = xTaskCreate((TaskFunction_t)GUI_Task,						 		// 任务入口函数 
+	xTaskCreate((TaskFunction_t)GUI_Task,						 	         	// 任务入口函数 
 											 (const char*    )"GUI_Task",		// 任务名称 
 											 (uint16_t       )1024,       		// 任务栈大小 
 											 (void*          )NULL,      		// 任务入口函数参数 
 											 (UBaseType_t    )2,         		// 任务的优先级 
 											 (TaskHandle_t   )&GUI_Task_Handle);// 任务控制块指针 
 											 
-	if(pdPASS == xReturn)
-		printf("创建GUI_Task任务成功！\r\n");
 	
 	// 第四个 SD_Card_Task任务
-	xReturn = xTaskCreate((TaskFunction_t)SD_Card_Task,						 	// 任务入口函数 
+	xTaskCreate((TaskFunction_t)SD_Card_Task,						 	        // 任务入口函数 
 											 (const char*    )"SD_Card_Task",	// 任务名称 
 											 (uint16_t       )1024,       		// 任务栈大小 
 											 (void*          )NULL,      		// 任务入口函数参数 
 											 (UBaseType_t    )4,         		// 任务的优先级 
 											 (TaskHandle_t   )&SD_Card_Task_Handle);// 任务控制块指针 
-											 
-	if(pdPASS == xReturn)
-		printf("创建SD_Card_Task任务成功！\r\n");
+					
 	
 	vTaskDelete(AppTaskCreate_Handle);// 删除AppTaskCreate任务
 	
@@ -186,6 +176,8 @@ static void AppTaskCreate(void)
   */
 static void CAN_Task(void* parameter)
 {
+	printf("CAN任务开始执行！\r\n");
+	
 	// CAN 任务完成初始化，通知 XCP 任务，添加信号量
     xSemaphoreGive(CanReadySem_Handle);
 	
@@ -203,10 +195,12 @@ static void CAN_Task(void* parameter)
   * @retval 无
   */
 static void XCP_Driver_Task(void* parameter)
-{
+{	
+	printf("XCP任务开始执行！\r\n");
+
     // 等待 CAN 任务准备好
     xSemaphoreTake(CanReadySem_Handle, portMAX_DELAY);  // 阻塞直到 CAN 任务通知
-	
+
 	while(1)
 	{
 		DAQ_Timestamp++; // 时间戳增加(10ms 单位)
@@ -223,6 +217,8 @@ static void XCP_Driver_Task(void* parameter)
   */
 static void GUI_Task(void* parameter)
 {
+	printf("GUI任务开始执行！\r\n");
+	
 	// 初始化LCD屏幕 
 	GUI_Init(); 
 	
@@ -231,15 +227,7 @@ static void GUI_Task(void* parameter)
 	
 	while(1)
 	{
-		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
-		{
-			LCD_Start();  
-		}
-		if(	Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON)
-		{
-			VoltageShow();  
-		}  		
-		
+		VoltageShow();  
 	}
 }
 
@@ -251,6 +239,8 @@ static void GUI_Task(void* parameter)
   */
 static void SD_Card_Task(void* parameter)
 {
+	printf("SD卡任务开始执行！\r\n");
+	
 	while(1)
 	{
 		SD_MainFunction();
@@ -258,6 +248,12 @@ static void SD_Card_Task(void* parameter)
 	}
 }
 
+/**
+  * @brief App应用初始化函数(FreeRTOS版本)
+  * @note  单片机通过按键1从Bootloader跳转到App程序
+  * @param 无
+  * @retval 无
+  */
 static void App_Init(void)
 {
 	#define VECT_TAB_OFFSET  0x0000
@@ -282,42 +278,47 @@ static void App_Init(void)
   */
 static void BSP_Init(void)
 {
-	// 初始化LED
-	LED_GPIO_Config();
-	
+    // 初始化LED
+    LED_GPIO_Config();
+
     // 初始化USART1
     Debug_USART_Config();
-		
-	// 初始化按键
-	Key_GPIO_Config();
-		
-	// 初始化CAN,在中断接收CAN数据包
-	CAN_Config();
-	
-	// 初始化XCP协议栈
-	XcpInit();
 
-    // 启用 CRC 校验，用于 emWin 库保护 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);  
-  	
-	// SD卡格式化测试，检测SD卡可用性
-	SD_Check();
-	
-	// SRAM初始化
+    // 初始化按键
+    Key_GPIO_Config();
+
+    // 初始化SD卡，检测SD卡可用性
+    SD_Check();
+
+    // 初始化SRAM
     FSMC_SRAM_Init();
-	
-	// RTC时钟初始化
-	RTC_CLK_Config();
-	
-	// RTC外设功能初始化
-	RTC_Initialize();
 
-	/*
-	 * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15
-	 * 优先级分组只需要分组一次即可，以后如果有其他的任务需要用到中断，
-	 * 都统一用这个优先级分组，千万不要再分组，切忌。
-	 */
-	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
+    // 初始化CAN，在中断接收CAN数据包
+    CAN_Config();
+
+    // 初始化XCP协议栈
+    XcpInit();
+
+    // 启用 CRC 校验，用于 emWin 库保护
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
+
+    // RTC时钟初始化
+    RTC_CLK_Config();
+
+    // RTC外设功能初始化
+    RTC_Initialize();
+
+	#if	UseKeyExtiIRQ
+	    EXTI_Key_Config();
+	#endif
+
+    /*
+     * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15
+     * 优先级分组只需要分组一次即可，以后如果有其他的任务需要用到中断，
+     * 都统一用这个优先级分组，千万不要再分组，切忌。
+     */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 }
+
 
 

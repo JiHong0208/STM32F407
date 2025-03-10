@@ -1,11 +1,15 @@
-
 #include "stm32f4xx_it.h"
-
-#include "FreeRTOS.h"					//FreeRTOS使用		  
-#include "task.h" 
 #include "bsp_can.h"
 #include "xcpBasic.h"
+#include "bsp_led.h"
 
+#if	UseKeyExtiIRQ
+#include "bsp_exti.h"
+#endif
+
+//FreeRTOS使用	
+#include "FreeRTOS.h"	  
+#include "task.h" 
 
 /**
   * @brief  This function handles NMI exception.
@@ -101,7 +105,6 @@ void SysTick_Handler(void)
 
 extern __IO uint32_t CANRxflag;               // 标志是否接收到数据
 extern CanRxMsg RxMessage;                    // CAN 接收缓冲区
-extern volatile uint8_t StartStopVoltageFlag; // 标志位，判断是否将电压数据存储进SD卡
 
 /**
   * @brief  This function handles CAN RX interrupt request.
@@ -134,6 +137,31 @@ void CAN_RX_IRQHandler(void)
     }
 }
 
+#if UseKeyExtiIRQ
+void KEY1_IRQHandler(void)
+{
+	//确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(KEY1_INT_EXTI_LINE) != RESET) 
+	{
+		// LED1 取反		
+		LED1_TOGGLE;
+		//清除中断标志位
+		EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE);     
+	}  
+}
+
+void KEY2_IRQHandler(void)
+{
+	//确保是否产生了EXTI Line中断
+	if(EXTI_GetITStatus(KEY2_INT_EXTI_LINE) != RESET) 
+	{
+		// LED2 取反		
+		LED2_TOGGLE;
+		//清除中断标志位
+		EXTI_ClearITPendingBit(KEY2_INT_EXTI_LINE);     
+	}  
+}
+#endif
 /**
   * @}
   */ 

@@ -177,14 +177,14 @@ void RTC_Initialize(void)
 		// 检查是否电源复位
 		if (RCC_GetFlagStatus(RCC_FLAG_PORRST) != RESET)
 		{
-			printf("\r\n 发生电源复位....\r\n");
+			printf("\r\n -----------------------发生电源复位-----------------------\r\n");
 		}
 		// 检查是否外部复位
 		else if (RCC_GetFlagStatus(RCC_FLAG_PINRST) != RESET)
 		{
-			printf("\r\n 发生外部复位....\r\n");
+			printf("\r\n -----------------------发生外部复位-----------------------\r\n");
 		}
-		printf("\r\n 不需要重新配置RTC....\r\n");
+		printf("\r\n ------------不需要重新配置RTC，RTC正常使用------------\r\n");
  
 		// 使能 PWR 时钟
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);

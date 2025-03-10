@@ -544,4 +544,4 @@ static  uint16_t SPI_TIMEOUT_UserCallback(uint8_t errorCode)
 	return 0;
 }
    
-/*********************************************END OF FILE**********************/
+
