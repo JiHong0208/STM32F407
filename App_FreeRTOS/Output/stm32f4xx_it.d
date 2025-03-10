@@ -52,4 +52,3 @@
 ..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcp_cfg.h
 ..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcp_par.h
 ..\..\output\stm32f4xx_it.o: ..\..\XCPDriver\xcpBasic.h
-..\..\output\stm32f4xx_it.o: ..\..\User\key\bsp_exti.h

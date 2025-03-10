@@ -802,11 +802,6 @@
               <FilePath>..\..\User\rtc\bsp_rtc.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\key\bsp_exti.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\sram\bsp_sram.c</FilePath>

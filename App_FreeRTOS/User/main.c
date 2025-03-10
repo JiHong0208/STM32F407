@@ -53,8 +53,9 @@ static TaskHandle_t SD_Card_Task_Handle = NULL;
 SemaphoreHandle_t CanReadySem_Handle   = NULL;// 信号量句柄
 
  
-// 定义 App 的起始地址宏
-#define APP_BASE_ADDRESS  0x08020000
+// 宏定义
+#define APP_BASE_ADDRESS  0x08020000	    // App 的起始地址宏
+#define CANPrintToUsart   0					// 是否将CAN报文输出至串口，0：不输出，1：输出
 
 // 定义全局变量
 volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
@@ -319,4 +320,4 @@ static void BSP_Init(void)
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 }
 
-/********************************END OF FILE****************************/
+

@@ -1,5 +1,5 @@
 ..\..\output\bsp_sram.o: ..\..\User\sram\bsp_sram.c
-..\..\output\bsp_sram.o: ..\..\User\./sram/bsp_sram.h
+..\..\output\bsp_sram.o: ..\..\User\sram\bsp_sram.h
 ..\..\output\bsp_sram.o: ..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 ..\..\output\bsp_sram.o: ..\..\Libraries\CMSIS\Include\core_cm4.h
 ..\..\output\bsp_sram.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

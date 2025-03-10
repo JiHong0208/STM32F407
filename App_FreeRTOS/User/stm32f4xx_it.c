@@ -5,7 +5,7 @@
 #include "task.h" 
 #include "bsp_can.h"
 #include "xcpBasic.h"
-#include "bsp_exti.h"
+
 
 /**
   * @brief  This function handles NMI exception.
@@ -85,11 +85,11 @@ void SysTick_Handler(void)
     #if (INCLUDE_xTaskGetSchedulerState  == 1 )
       if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
       {
-    #endif  /* INCLUDE_xTaskGetSchedulerState */  
+    #endif  // INCLUDE_xTaskGetSchedulerState 
         xPortSysTickHandler();
     #if (INCLUDE_xTaskGetSchedulerState  == 1 )
       }
-    #endif  /* INCLUDE_xTaskGetSchedulerState */
+    #endif  // INCLUDE_xTaskGetSchedulerState 
 }
 
 /******************************************************************************/
@@ -110,22 +110,22 @@ extern volatile uint8_t StartStopVoltageFlag; // ±êÖ¾Î»£¬ÅĞ¶ÏÊÇ·ñ½«µçÑ¹Êı¾İ´æ´¢½
   */
 void CAN_RX_IRQHandler(void)
 {
-    /* ´ÓÓÊÏäÖĞ¶ÁÈ¡±¨ÎÄ */
+    // ´ÓÓÊÏäÖĞ¶ÁÈ¡±¨ÎÄ 
     CAN_Receive(CANx, CAN_FIFO0, &RxMessage);
 
-    /* ¼ì²éÊÇ·ñÎª XCP ±¨ÎÄ */
+    // ¼ì²éÊÇ·ñÎª XCP ±¨ÎÄ 
     if ((RxMessage.ExtId == 0x1234) && 
         (RxMessage.IDE == CAN_ID_EXT) && 
         (RxMessage.DLC == 8)) 
     {
-        /* µ÷ÓÃ XCP µÄ½ÓÊÕ´¦Àíº¯Êı */
+        // µ÷ÓÃ XCP µÄ½ÓÊÕ´¦Àíº¯Êı 
         XcpRxHandler(RxMessage.Data);
     } 
     else if ((RxMessage.ExtId == 0x1314) && 
              (RxMessage.IDE == CAN_ID_EXT) && 
              (RxMessage.DLC == 8)) 
     {
-        /* ´¦ÀíÔ­ÓĞµÄ 0x1314 ±¨ÎÄ */
+        // ´¦ÀíÔ­ÓĞµÄ 0x1314 ±¨ÎÄ 
         CANRxflag = 1;  // ½ÓÊÕ³É¹¦  
     } 
     else 
@@ -133,27 +133,7 @@ void CAN_RX_IRQHandler(void)
         CANRxflag = 0;  // ½ÓÊÕÊ§°Ü
     }
 }
-#if 0
-void KEY1_IRQHandler(void)
-{
-  //È·±£ÊÇ·ñ²úÉúÁËEXTI LineÖĞ¶Ï
-	if(EXTI_GetITStatus(KEY1_INT_EXTI_LINE) != RESET) 
-	{
-    //Çå³ıÖĞ¶Ï±êÖ¾Î»
-		EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE);     
-	}  
-}
 
-void KEY2_IRQHandler(void)
-{
-  //È·±£ÊÇ·ñ²úÉúÁËEXTI LineÖĞ¶Ï
-	if(EXTI_GetITStatus(KEY2_INT_EXTI_LINE) != RESET) 
-	{
-    //Çå³ıÖĞ¶Ï±êÖ¾Î»
-		EXTI_ClearITPendingBit(KEY2_INT_EXTI_LINE);     
-	}  
-}
-#endif
 /**
   * @}
   */ 
