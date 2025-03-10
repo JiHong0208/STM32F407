@@ -60,27 +60,42 @@ void SD_MainFunction()
         }
     } 
 
-    // 2. 打开当天的 CSV 文件
-    res_sd = f_open(&fnew, fileName, FA_OPEN_ALWAYS );
-    if (res_sd == FR_OK)
-    {
-        /* 移动到文件末尾，确保新数据追加写入 */
-        f_lseek(&fnew, f_size(&fnew));
+	// 2. 打开当天的 CSV 文件
+	res_sd = f_open(&fnew, fileName, FA_OPEN_ALWAYS | FA_WRITE);
+	if (res_sd == FR_OK)
+	{
+		/* 移动到文件末尾，确保新数据追加写入 */
+		f_lseek(&fnew, f_size(&fnew));
 
-        /* 如果是新文件，则写入表头 */
-        if (f_size(&fnew) == 0) {
-            char header[] = "Date,WeekDay,Time,Voltage1(mv),Voltage2(mv),Voltage3(mv),Voltage4(mv)\r\n";
-            f_write(&fnew, header, strlen(header), &fnum);
-        }
+		/* 如果是新文件，则写入表头 */
+		if (f_size(&fnew) == 0) 
+		{
+			char header[] = "Date,WeekDay,Time,Voltage1(mv),Voltage2(mv),Voltage3(mv),Voltage4(mv)\r\n";
+			res_sd = f_write(&fnew, header, strlen(header), &fnum);
+			if (res_sd != FR_OK) 
+			{
+				printf("写入表头失败: %d\r\n", res_sd);
+			}
+		}
 
-        /* 写入电压数据 */
-        f_write(&fnew, WriteBuffer, strlen(WriteBuffer), &fnum);
+		/* 写入电压数据 */
+		res_sd = f_write(&fnew, WriteBuffer, strlen(WriteBuffer), &fnum);
+		if (res_sd != FR_OK) 
+		{
+			printf("写入数据失败: %d\r\n", res_sd);
+		}
 
-        /* 关闭文件 */
-        f_close(&fnew);
-    }
+		/* 确保数据写入 SD 卡 */
+		f_sync(&fnew);
 
-}
+		/* 关闭文件 */
+		f_close(&fnew);
+	}
+	else
+	{
+		printf("文件打开失败: %d\r\n", res_sd);
+	}
+}	
 
 void DeleteOldCSV(int currentYear, int currentMonth, int currentDay)
 {
