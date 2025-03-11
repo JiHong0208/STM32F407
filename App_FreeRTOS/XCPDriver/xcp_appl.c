@@ -645,26 +645,26 @@ vuint32 ApplXcpGetIdData(MTABYTEPTR* pData, vuint8 id)
         case IDT_ASCII:
             *pData = (MTABYTEPTR)&asciiString; /* Handle ASCII text */
             return (vuint32)sizeof(asciiString) - 1;
-            break;
+//            break;
 
         case IDT_ASAM_NAME:
             *pData = (MTABYTEPTR)&asamName; /* Handle ASAM-MC2 filename without path and extension */
             return (vuint32)sizeof(asamName) - 1;
-            break;
+//            break;
 
         case IDT_ASAM_PATH:
             *pData = (MTABYTEPTR)&asamPath; /* Handle ASAM-MC2 filename with path and extension */
             return (vuint32)sizeof(asamPath) - 1;
-            break;
+//            break;
 
         case IDT_VECTOR_MAPNAMES:
             *pData = (MTABYTEPTR)&mapName; /* Handle map file name */
             return (vuint32)sizeof(mapName) - 1;
-            break;
+//            break;
 
         default:
             return (vuint32)0u; /* Id not available */
-            break;
+//            break;
     }
 }
 #endif /* XCP_ENABLE_GET_ID_GENERIC */

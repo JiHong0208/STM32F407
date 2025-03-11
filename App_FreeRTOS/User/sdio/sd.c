@@ -28,18 +28,54 @@ void SD_MainFunction()
     uint16_t voltage3 = Get_CAN_Voltage(3);  
     uint16_t voltage4 = Get_CAN_Voltage(4);  
 
-    char dateStr[20];  // 存储RTC日期文本 YYYY/MM/DD
+    char dateStr[20];  // 存储RTC日期文本 YYYY-MM-DD
     char weekStr[20];  // 存储RTC星期文本
     char timeStr[20];  // 存储RTC时钟文本 HH:MM:SS
 
     RTC_TimeAndDate_Get(dateStr, timeStr, weekStr);
 
-	// 提取日期信息并构造文件名
-	int year, month, day;
-	sscanf(dateStr, "%d-%d-%d", &year, &month, &day);  // 解析 YYYY-MM-DD 格式
-	char fileName[64];
-	snprintf(fileName, sizeof(fileName), "0:STM32F407_BMS_Voltage_%04d%02d%02d.csv", year, month, day);
+    // 解析时间，获取小时、分钟、秒
+    int hour, minute, second;
+    sscanf(timeStr, "%d:%d:%d", &hour, &minute, &second);
 
+    // 提取日期信息并构造文件名
+    int year, month, day;
+    sscanf(dateStr, "%d-%d-%d", &year, &month, &day);  // 解析 YYYY-MM-DD 格式
+
+    // 获取当前时间的秒数（或者存储周期的起始秒数）
+    static int lastYear = -1, lastMonth = -1, lastDay = -1;
+    static int lastSecond = -1;
+
+    // 如果日期发生变化或秒数跳变，则更新文件名
+    if (lastYear != year || lastMonth != month || lastDay != day || lastSecond != second) {
+        lastYear = year;
+        lastMonth = month;
+        lastDay = day;
+        lastSecond = second;
+
+        // 构造新的文件名
+        char fileName[64];
+        snprintf(fileName, sizeof(fileName), "0:STM32F407_BMS_Voltage_%04d%02d%02d.csv", year, month, day);
+
+        // 1. 打开新的文件进行写入
+        res_sd = f_open(&fnew, fileName, FA_OPEN_ALWAYS | FA_WRITE);
+        if (res_sd != FR_OK) {
+            f_mount(NULL, "0:", 0);  // 卸载 SD 卡
+            f_mount(&fs, "0:", 1);   // 重新挂载
+            res_sd = f_open(&fnew, fileName, FA_OPEN_ALWAYS | FA_WRITE); // 再次尝试打开
+        }
+
+        if (res_sd == FR_OK) {
+            // 移动到文件末尾，确保新数据追加写入
+            f_lseek(&fnew, f_size(&fnew));
+
+            // 如果是新文件，则写入表头
+            if (f_size(&fnew) == 0) {
+                char header[] = "Date,WeekDay,Time,Voltage1(mv),Voltage2(mv),Voltage3(mv),Voltage4(mv)\r\n";
+                res_sd = f_write(&fnew, header, strlen(header), &fnum);
+            }
+        }
+    }
 
     // 格式化写入内容
     char WriteBuffer[128];
@@ -47,43 +83,13 @@ void SD_MainFunction()
              "%s,%s,%s,%d,%d,%d,%d\r\n",
              dateStr, weekStr, timeStr, voltage1, voltage2, voltage3, voltage4);
 
-    // 1. 检查 SD 卡容量是否小于 1GB
-    DWORD free_clusters, free_sectors;
-    FATFS* fs_ptr;
-    
-    res_sd = f_getfree("0:", &free_clusters, &fs_ptr);
-    if (res_sd == FR_OK) 
-	{
-        free_sectors = free_clusters * fs_ptr->csize;
-        if (free_sectors < (1024 * 1024 * 2)) {  // 小于 1GB（假设扇区大小512字节）
-            DeleteOldCSV(year, month, day);
-        }
-    } 
-
-	// 2. 打开当天的 CSV 文件
-	res_sd = f_open(&fnew, fileName, FA_OPEN_ALWAYS | FA_WRITE);
-	if (res_sd == FR_OK)
-	{
-		// 移动到文件末尾，确保新数据追加写入
-		f_lseek(&fnew, f_size(&fnew));
-
-		// 如果是新文件，则写入表头
-		if (f_size(&fnew) == 0) 
-		{
-			char header[] = "Date,WeekDay,Time,Voltage1(mv),Voltage2(mv),Voltage3(mv),Voltage4(mv)\r\n";
-			res_sd = f_write(&fnew, header, strlen(header), &fnum);
-		}
-
-		// 写入电压数据
-		res_sd = f_write(&fnew, WriteBuffer, strlen(WriteBuffer), &fnum);
-
-		// 确保数据写入 SD 卡
-		f_sync(&fnew);
-
-		// 关闭文件
-		f_close(&fnew);
-	}
-}	
+    // 2. 写入电压数据
+    if (res_sd == FR_OK) {
+        res_sd = f_write(&fnew, WriteBuffer, strlen(WriteBuffer), &fnum);
+        // 确保数据写入 SD 卡
+        f_sync(&fnew);
+    }
+}
 
 void DeleteOldCSV(int currentYear, int currentMonth, int currentDay)
 {
