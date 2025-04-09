@@ -4,7 +4,7 @@
 #include "stdlib.h"  // 用于随机数生成
 
 
-extern CanTxMsg TxMessage;			     //通过CAN发送出去的模拟电压数据
+extern CanTxMsg TxMessage;			     // 通过CAN发送出去的模拟电压数据
 
 /*
  * 函数名：CAN_GPIO_Config
@@ -53,9 +53,9 @@ static void CAN_NVIC_Config(void)
 	// Configure one bit for preemption priority 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 	// 中断设置
-	NVIC_InitStructure.NVIC_IRQChannel = CAN_RX_IRQ;	   		//CAN RX0中断
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;	//抢占优先级0
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级为0
+	NVIC_InitStructure.NVIC_IRQChannel = CAN_RX_IRQ;	   		// CAN RX0中断
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;	// 抢占优先级0
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			// 子优先级为0
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
@@ -79,21 +79,21 @@ static void CAN_Mode_Config(void)
 	CAN_StructInit(&CAN_InitStructure);
 
 	// CAN单元初始化
-	CAN_InitStructure.CAN_TTCM=DISABLE;			   //MCR-TTCM  关闭时间触发通信模式使能
-	CAN_InitStructure.CAN_ABOM=ENABLE;			   //MCR-ABOM  自动离线管理 
-	CAN_InitStructure.CAN_AWUM=ENABLE;			   //MCR-AWUM  使用自动唤醒模式
-	CAN_InitStructure.CAN_NART=DISABLE;			   //MCR-NART  禁止报文自动重传	  DISABLE-自动重传
-	CAN_InitStructure.CAN_RFLM=DISABLE;			   //MCR-RFLM  接收FIFO 锁定模式  DISABLE-溢出时新报文会覆盖原有报文  
-	CAN_InitStructure.CAN_TXFP=DISABLE;			   //MCR-TXFP  发送FIFO优先级 DISABLE-优先级取决于报文标示符 
-	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;  //正常工作模式
-	CAN_InitStructure.CAN_SJW=CAN_SJW_2tq;		   //BTR-SJW 重新同步跳跃宽度 2个时间单元
+	CAN_InitStructure.CAN_TTCM=DISABLE;			   // MCR-TTCM  关闭时间触发通信模式使能
+	CAN_InitStructure.CAN_ABOM=ENABLE;			   // MCR-ABOM  自动离线管理 
+	CAN_InitStructure.CAN_AWUM=ENABLE;			   // MCR-AWUM  使用自动唤醒模式
+	CAN_InitStructure.CAN_NART=DISABLE;			   // MCR-NART  禁止报文自动重传	  DISABLE-自动重传
+	CAN_InitStructure.CAN_RFLM=DISABLE;			   // MCR-RFLM  接收FIFO 锁定模式  DISABLE-溢出时新报文会覆盖原有报文  
+	CAN_InitStructure.CAN_TXFP=DISABLE;			   // MCR-TXFP  发送FIFO优先级 DISABLE-优先级取决于报文标示符 
+	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;  // 正常工作模式
+	CAN_InitStructure.CAN_SJW=CAN_SJW_2tq;		   // BTR-SJW 重新同步跳跃宽度 2个时间单元
 	 
 	// ss=1 bs1=4 bs2=2 位时间宽度为(1+4+2) 波特率即为时钟周期tq*(1+4+2) 
-	CAN_InitStructure.CAN_BS1=CAN_BS1_4tq;		   //BTR-TS1 时间段1 占用了4个时间单元
-	CAN_InitStructure.CAN_BS2=CAN_BS2_2tq;		   //BTR-TS1 时间段2 占用了2个时间单元	
+	CAN_InitStructure.CAN_BS1=CAN_BS1_4tq;		   // BTR-TS1 时间段1 占用了4个时间单元
+	CAN_InitStructure.CAN_BS2=CAN_BS2_2tq;		   // BTR-TS1 时间段2 占用了2个时间单元	
 	
 	// CAN Baudrate = 1 MBps (1MBps已为stm32的CAN最高速率) (CAN 时钟频率为 APB 1 = 42 MHz) 
-	CAN_InitStructure.CAN_Prescaler =6;		   ////BTR-BRP 波特率分频器  定义了时间单元的时间长度 42/(1+4+2)/6=1 Mbps
+	CAN_InitStructure.CAN_Prescaler =6;		   //// BTR-BRP 波特率分频器  定义了时间单元的时间长度 42/(1+4+2)/6=1 Mbps
 	CAN_Init(CANx, &CAN_InitStructure);
 }
 
@@ -108,24 +108,77 @@ static void CAN_Filter_Config(void)
 {
 	CAN_FilterInitTypeDef  CAN_FilterInitStructure;
 
+	 /*
+     * 共有四组筛选器来选择可通过的 CAN_ID
+	 * 1.筛选器14 - 0x1314 - CAN Request ID (CAN通讯请求ID)
+	 * 2.筛选器15 - 0x0520 - CAN Response ID(CAN通讯接收ID)
+	 * 3.筛选器16 - 0x1234 - XCP Request ID (XCP协议栈请求ID)
+	 * 4.筛选器17 - 0x5678 - XCP Response ID(XCP协议栈接收ID)
+     */
+	
+	/* ---------- 筛选器14 ---------- */
 	// CAN筛选器初始化
-	CAN_FilterInitStructure.CAN_FilterNumber=14;						//筛选器组14
-	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;	    //工作在掩码模式
-	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	    //筛选器位宽为单个32位。
+	CAN_FilterInitStructure.CAN_FilterNumber=14;						// 筛选器组14
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;	    // 工作在掩码模式
+	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	    // 筛选器位宽为单个32位。
 	// 使能筛选器，按照标志的内容进行比对筛选，扩展ID不是如下的就抛弃掉，是的话，会存入FIFO0。 
-
-	CAN_FilterInitStructure.CAN_FilterIdHigh = ((((uint32_t)0x1314u << 3) | ((uint32_t)0x00000004u) | ((uint32_t)0x00000000u)) & 0xFFFF0000u) >> 16;//要筛选的ID高位 
-	CAN_FilterInitStructure.CAN_FilterIdLow = ((((uint32_t)0x1314u << 3) | (uint32_t)CAN_ID_EXT | (uint32_t)CAN_RTR_DATA) & 0xFFFFu);//要筛选的ID低位 
-//	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			    //筛选器高16位每位必须匹配
-//	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0x0000;			    //筛选器高16位每位必须匹配
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0x0000;		        //筛选器低16位每位必须匹配
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;	//筛选器被关联到FIFO0
-	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			    //使能筛选器
+	CAN_FilterInitStructure.CAN_FilterIdHigh= ((((uint32_t)0x1314<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF0000)>>16;		// 要筛选的ID高位 
+	CAN_FilterInitStructure.CAN_FilterIdLow=  (( (uint32_t)0x1314<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF;			    // 要筛选的ID低位 
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			    // 筛选器高16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	            // 筛选器低16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;	// 筛选器被关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			    // 使能筛选器
 	CAN_FilterInit(&CAN_FilterInitStructure);
+
+	
+	/* ---------- 筛选器15 ---------- */
+	// CAN筛选器初始化
+	CAN_FilterInitStructure.CAN_FilterNumber=15;						// 筛选器组15
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;	    // 工作在掩码模式
+	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	    // 筛选器位宽为单个32位。
+	// 使能筛选器，按照标志的内容进行比对筛选，扩展ID不是如下的就抛弃掉，是的话，会存入FIFO0。 
+	CAN_FilterInitStructure.CAN_FilterIdHigh= ((((uint32_t)0x520<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF0000)>>16;		// 要筛选的ID高位 
+	CAN_FilterInitStructure.CAN_FilterIdLow=  (( (uint32_t)0x520<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF;			    // 要筛选的ID低位 
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			    // 筛选器高16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	            // 筛选器低16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;	// 筛选器被关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			    // 使能筛选器
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
+	
+	/* ---------- 筛选器16 ---------- */
+	// CAN筛选器初始化
+	CAN_FilterInitStructure.CAN_FilterNumber=16;						// 筛选器组16
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;	    // 工作在掩码模式
+	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	    // 筛选器位宽为单个32位。
+	// 使能筛选器，按照标志的内容进行比对筛选，扩展ID不是如下的就抛弃掉，是的话，会存入FIFO0。 
+	CAN_FilterInitStructure.CAN_FilterIdHigh= ((((uint32_t)0x1234<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF0000)>>16;		// 要筛选的ID高位 
+	CAN_FilterInitStructure.CAN_FilterIdLow=  (( (uint32_t)0x1234<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF;			    // 要筛选的ID低位 
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			    // 筛选器高16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	            // 筛选器低16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;	// 筛选器被关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			    // 使能筛选器
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
+	
+	/* ---------- 筛选器17 ---------- */
+	// CAN筛选器初始化
+	CAN_FilterInitStructure.CAN_FilterNumber=17;						// 筛选器组17
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;	    // 工作在掩码模式
+	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;	    // 筛选器位宽为单个32位。
+	// 使能筛选器，按照标志的内容进行比对筛选，扩展ID不是如下的就抛弃掉，是的话，会存入FIFO0。 
+	CAN_FilterInitStructure.CAN_FilterIdHigh= ((((uint32_t)0x5678<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF0000)>>16;		// 要筛选的ID高位 
+	CAN_FilterInitStructure.CAN_FilterIdLow=  (( (uint32_t)0x5678<<3)|CAN_ID_EXT|CAN_RTR_DATA)&0xFFFF;			    // 要筛选的ID低位 
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0xFFFF;			    // 筛选器高16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow= 0xFFFF;	            // 筛选器低16位每位必须匹配
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0 ;	// 筛选器被关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;			    // 使能筛选器
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
 	
 	// CAN通信中断使能
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
+	
 }
 
 /*
@@ -204,10 +257,10 @@ void CAN_SetMsg(CanTxMsg *TxMessage)
         VoltageToBytes(voltages[ubCounter], &data[ubCounter * 2], &data[ubCounter * 2 + 1]);
     }
 						 
-    TxMessage->ExtId = 0x520;					  //使用的扩展ID，将ID设置为0x520
-    TxMessage->IDE = CAN_ID_EXT;				  //扩展模式
-    TxMessage->RTR = CAN_RTR_DATA;			      //发送的是数据
-    TxMessage->DLC = 8;						      //数据长度为8字节
+    TxMessage->ExtId = 0x520;					  // 使用的扩展ID，将ID设置为0x520
+    TxMessage->IDE = CAN_ID_EXT;				  // 扩展模式
+    TxMessage->RTR = CAN_RTR_DATA;			      // 发送的是数据
+    TxMessage->DLC = 8;						      // 数据长度为8字节
 	
 	// 将设置好的数据发送出去
 	for (ubCounter = 0; ubCounter < 8; ubCounter++)

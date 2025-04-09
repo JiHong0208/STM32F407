@@ -1,7 +1,7 @@
 #include "fonts.h"	
-#include "bsp_ili9341_lcd.h"
 #include <stdio.h>
 #include <string.h>
+#include "bsp_ili9341_lcd.h"
 
 //根据液晶扫描方向而变化的XY像素宽度
 //调用ILI9341_GramScan函数设置方向时会自动更改

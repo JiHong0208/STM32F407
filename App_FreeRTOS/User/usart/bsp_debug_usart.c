@@ -1,4 +1,3 @@
-
 #include "bsp_debug_usart.h"
 
 /**

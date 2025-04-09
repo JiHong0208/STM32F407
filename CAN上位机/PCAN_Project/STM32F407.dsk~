@@ -43,7 +43,7 @@ HexViewVisible=0
 [2]
 Name=Window1_OutputWindow
 ObjectKind={4842AE28-C870-4465-8195-8E0BC9B5DC5A}
-Visible=1
+Visible=0
 FloatLeft=780
 FloatTop=207
 FloatWidth=500
@@ -116,8 +116,8 @@ RowHeaderWidth=652
 Name=Window1_0EFDD5ED3FFB4FECAA56927B865C3B3A
 ObjectKind={0EFDD5ED-3FFB-4FEC-AA56-927B865C3B3A}
 Visible=0
-Left=-3503
-Top=-4928
+Left=-4313
+Top=-6048
 Width=183
 Height=539
 FloatLeft=110
@@ -178,6 +178,14 @@ Height=365
 HexViewSize=60
 
 [Closed5]
+Ident=Trace2
+Left=78
+Top=78
+Width=1091
+Height=365
+HexViewSize=60
+
+[Closed6]
 Ident=RcvXmt
 Left=26
 Top=26
@@ -187,14 +195,6 @@ RcvSize=500
 SplitState=1
 HexViewSize=60
 HexViewVisible=0
-
-[Closed6]
-Ident=Trace2
-Left=78
-Top=78
-Width=1091
-Height=365
-HexViewSize=60
 
 [WatchWindow]
 Columns=nvm

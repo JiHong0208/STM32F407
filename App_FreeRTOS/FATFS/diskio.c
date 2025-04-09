@@ -9,8 +9,11 @@
 
 #include "diskio.h"		/* FatFs lower layer API */
 #include "ff.h"
-#include "bsp_sdio_sd.h"
 #include "string.h"
+#include "bsp_rtc.h"
+#include "bsp_sdio_sd.h"
+
+
 
 /* 为每个设备定义一个物理编号 */
 #define ATA			           0     // SD卡
@@ -136,7 +139,7 @@ DRESULT disk_read (
 #if _USE_WRITE
 DRESULT disk_write (
 	BYTE pdrv,			  /* 设备物理编号(0..) */
-	const BYTE *buff,	/* 欲写入数据的缓存区 */
+	const BYTE *buff,	  /* 欲写入数据的缓存区 */
 	DWORD sector,		  /* 扇区首地址 */
 	UINT count			  /* 扇区个数(1..128) */
 )
@@ -200,9 +203,9 @@ DRESULT disk_write (
 
 #if _USE_IOCTL
 DRESULT disk_ioctl (
-	BYTE pdrv,		/* 物理编号 */
-	BYTE cmd,		  /* 控制指令 */
-	void *buff		/* 写入或者读取数据地址指针 */
+	BYTE pdrv,		// 物理编号 
+	BYTE cmd,		// 控制指令 
+	void *buff		// 写入或者读取数据地址指针 
 )
 {
 	DRESULT status = RES_PARERR;
@@ -238,12 +241,20 @@ DRESULT disk_ioctl (
 }
 #endif
 
-__weak DWORD get_fattime(void) {
-	/* 返回当前时间戳 */
-	return	  ((DWORD)(2015 - 1980) << 25)	/* Year 2015 */
-			| ((DWORD)1 << 21)				/* Month 1 */
-			| ((DWORD)1 << 16)				/* Mday 1 */
-			| ((DWORD)0 << 11)				/* Hour 0 */
-			| ((DWORD)0 << 5)				  /* Min 0 */
-			| ((DWORD)0 >> 1);				/* Sec 0 */
+__weak DWORD get_fattime(void) 
+{
+	RTC_DateTypeDef RTC_DateStructure;
+    RTC_TimeTypeDef RTC_TimeStructure;
+	
+	// 获取日历
+	RTC_GetDate(RTC_Format_BIN, &RTC_DateStructure);
+    RTC_GetTime(RTC_Format_BIN, &RTC_TimeStructure);
+	
+	// 返回当前时间戳
+	return	  ((DWORD)(RTC_DateStructure.RTC_Year+ (2000)) << 25)		/* Year */
+			| ((DWORD) RTC_DateStructure.RTC_Month << 21)				/* Month */
+			| ((DWORD) RTC_DateStructure.RTC_Date  << 16)				/* Mday */
+			| ((DWORD) RTC_TimeStructure.RTC_Hours << 11)				/* Hour */
+			| ((DWORD) RTC_TimeStructure.RTC_Minutes << 5)				/* Minute */
+			| ((DWORD) RTC_TimeStructure.RTC_Seconds >> 1);				/* Second */
 }
