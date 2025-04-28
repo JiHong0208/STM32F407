@@ -3,9 +3,6 @@
 #include "xcpBasic.h"
 #include "bsp_led.h"
 
-#if	UseKeyExtiIRQ
-#include "bsp_exti.h"
-#endif
 
 //FreeRTOS使用	
 #include "FreeRTOS.h"	  
@@ -137,31 +134,7 @@ void CAN_RX_IRQHandler(void)
     }
 }
 
-#if UseKeyExtiIRQ
-void KEY1_IRQHandler(void)
-{
-	//确保是否产生了EXTI Line中断
-	if(EXTI_GetITStatus(KEY1_INT_EXTI_LINE) != RESET) 
-	{
-		// LED1 取反		
-		LED1_TOGGLE;
-		//清除中断标志位
-		EXTI_ClearITPendingBit(KEY1_INT_EXTI_LINE);     
-	}  
-}
 
-void KEY2_IRQHandler(void)
-{
-	//确保是否产生了EXTI Line中断
-	if(EXTI_GetITStatus(KEY2_INT_EXTI_LINE) != RESET) 
-	{
-		// LED2 取反		
-		LED2_TOGGLE;
-		//清除中断标志位
-		EXTI_ClearITPendingBit(KEY2_INT_EXTI_LINE);     
-	}  
-}
-#endif
 /**
   * @}
   */ 

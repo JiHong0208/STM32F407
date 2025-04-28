@@ -54,12 +54,9 @@ static TaskHandle_t SD_Card_Task_Handle = NULL;
  * 
  */
 SemaphoreHandle_t CanReadySem_Handle   = NULL;// 信号量句柄
-
  
 // 宏定义
 #define APP_BASE_ADDRESS  0x08020000	    // App 的起始地址宏
-#define CANPrintToUsart   0					// 是否将CAN报文输出至串口，0：不输出，1：输出
-#define UseKeyExtiIRQ	  0					// 是否使用Exit外部按键中断 0：不使用，1：使用
 
 // 定义全局变量
 volatile uint32_t DAQ_Timestamp = 0; 		// XCP的DAQ时间戳，单位：10ms
@@ -308,9 +305,6 @@ static void BSP_Init(void)
     // RTC外设功能初始化
     RTC_Initialize();
 
-	#if	UseKeyExtiIRQ
-	    EXTI_Key_Config();
-	#endif
 
     /*
      * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15

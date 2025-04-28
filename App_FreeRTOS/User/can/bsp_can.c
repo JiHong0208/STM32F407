@@ -4,6 +4,7 @@
 #include "stdlib.h"  // 用于随机数生成
 
 
+#define CANPrintToUsart   0					 // 是否将CAN报文输出至串口，0：不输出，1：输出
 extern CanTxMsg TxMessage;			     // 通过CAN发送出去的模拟电压数据
 
 /*
@@ -330,7 +331,7 @@ void SendCANEvent(void)
 {
 	CAN_SetMsg(&TxMessage);
 	CAN_Transmit(CANx, &TxMessage);
-	
+
 	//是否将CAN报文信息打印到串口中
 	#if CANPrintToUsart
 	CAN_DEBUG_ARRAY(TxMessage.Data,8); 
